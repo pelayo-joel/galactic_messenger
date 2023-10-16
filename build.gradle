@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+}
+
+group = 'edu.laplateforme'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar {
+    archiveBaseName = 'galactic_messenger_client.jar'
+    destinationDirectory = file("$rootDir")
+    manifest {
+        attributes "Main-Class" : "galactic_messenger_client"
+    }
+    from {
+        configurations.runtimeClasspath.collect{it.isDirectory() ? it : zipTree(it)}
+    }
+}
+
+jar {
+    archiveBaseName = 'galactic_messenger_server.jar'
+    destinationDirectory = file("$rootDir")
+    manifest {
+        attributes "Main-Class" : "galactic_messenger_server"
+    }
+    from {
+        configurations.runtimeClasspath.collect{it.isDirectory() ? it : zipTree(it)}
+    }
+}
