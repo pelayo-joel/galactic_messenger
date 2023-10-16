@@ -7,6 +7,10 @@
     <list default="true" id="4190aee2-2537-4425-af85-159ac30cfe62" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/galactic_messenger.sql" beforeDir="false" afterPath="$PROJECT_DIR$/galactic_messenger.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/galactic_messenger_client.jar" beforeDir="false" afterPath="$PROJECT_DIR$/galactic_messenger_client.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/galactic_messenger_server.jar" beforeDir="false" afterPath="$PROJECT_DIR$/galactic_messenger_server.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/edu/laplateforme/server/ServerClass.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/edu/laplateforme/server/ServerClass.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,22 +41,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/pelay/dev/remote/school/laplateforme/maze_runner&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/pelay/dev/remote/school/laplateforme/galactic_messenger/src/main/java/edu/laplateforme/Main.java&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/pelay/dev/remote/school/laplateforme/maze_runner",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "onboarding.tips.debug.path": "C:/Users/pelay/dev/remote/school/laplateforme/galactic_messenger/src/main/java/edu/laplateforme/Main.java",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="galactic_messenger [jar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
@@ -92,7 +100,7 @@
       <updated>1697442769086</updated>
       <workItem from="1697442770146" duration="1717000" />
       <workItem from="1697453880032" duration="1069000" />
-      <workItem from="1697455432329" duration="449000" />
+      <workItem from="1697455432329" duration="3669000" />
     </task>
     <servers />
   </component>
