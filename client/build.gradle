@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group = 'edu.laplateforme'
+group = 'galactic.client'
 
 repositories {
     mavenCentral()
@@ -21,21 +21,9 @@ jar {
     archiveBaseName = 'galactic_messenger_client'
     destinationDirectory = file("$rootDir")
     manifest {
-        attributes "Main-Class" : "galactic_messenger_client"
+        attributes "Main-Class" : "galactic.client.Client"
     }
     from {
         configurations.runtimeClasspath.collect{it.isDirectory() ? it : zipTree(it)}
     }
 }
-
-task jar2 (type: Jar) {
-    archiveBaseName = 'galactic_messenger_server'
-    destinationDirectory = file("$rootDir")
-    manifest {
-        attributes "Main-Class" : "galactic_messenger_server"
-    }
-    from {
-        configurations.runtimeClasspath.collect{it.isDirectory() ? it : zipTree(it)}
-    }
-}
-assemble.dependsOn(jar2);
