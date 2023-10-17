@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+}
+
+group = 'galactic.client'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar {
+    archiveBaseName = 'galactic_messenger_client'
+    destinationDirectory = file("$rootDir")
+    manifest {
+        attributes "Main-Class" : "galactic.client.Client"
+    }
+    from {
+        configurations.runtimeClasspath.collect{it.isDirectory() ? it : zipTree(it)}
+    }
+}
