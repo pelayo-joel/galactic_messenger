@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4190aee2-2537-4425-af85-159ac30cfe62" name="Changes" comment="" />
+    <list default="true" id="4190aee2-2537-4425-af85-159ac30cfe62" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -55,6 +57,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "client",
     "jdk.selected.JAVA_MODULE": "20",
     "last_opened_file_path": "C:/Users/pelay/dev/remote/school/laplateforme/galactic_messenger",
     "node.js.detected.package.eslint": "true",
