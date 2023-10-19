@@ -1,7 +1,7 @@
 package galactic.client;
 import java.io.*;
 import java.net.Socket;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class Client {
@@ -23,31 +23,26 @@ public class Client {
         }
     }
 
+    //    thread to receive messages
+//    thread to send messages
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Client start...");
-        Client client = new Client("10.10.6.78", 4269);
+        Client client = new Client("10.10.10.214", 4269);
         System.out.println("Client connected to server");
         boolean send = false;
 
-
         String message = scanner.nextLine();
         client.send(message);
-
-
-
-
     }
 
     public void send(String message) {
-        String[] message_split = message.split(" ", -1);
+        List<String> message_split = List.of(message.split(" "));
 //        System.out.println(Arrays.toString(message_split));
 
         try{
-
             writer.writeObject(message_split);
             writer.flush();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -57,7 +52,7 @@ public class Client {
     public void receive() {
 
         try {
-            String message = (String) reader.readLine();
+            String message = reader.readLine();
             System.out.println(message);
         } catch (IOException e) {
             e.printStackTrace();
