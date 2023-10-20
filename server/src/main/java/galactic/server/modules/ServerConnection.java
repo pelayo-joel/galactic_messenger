@@ -1,14 +1,14 @@
 package galactic.server.modules;
 
 
-import galactic.server.modules.database.DbConnection;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
+
+import galactic.server.modules.database.DbConnection;
 
 
 public class ServerConnection {
@@ -37,7 +37,7 @@ public class ServerConnection {
                 UserThread newUser = new UserThread(socket, this);
                 userThreads.add(newUser);
                 newUser.start();
-
+                //System.out.println("checking");
             }
 
         } catch (IOException ex) {
