@@ -2,6 +2,7 @@ package galactic.server.modules.commands;
 
 
 import java.util.List;
+import java.security.MessageDigest;
 
 import galactic.server.modules.commands.interfaces.Command;
 import galactic.server.modules.commands.interfaces.Encryption;
@@ -34,13 +35,13 @@ public class GroupChat implements Command, Encryption {
     }
 
     @Override
-    public void Hashing() {
-
+    public String Hashing() {
+        return "";
     }
 
     @Override
-    public void Salting() {
-
+    public String Salting() {
+        return "";
     }
 
 

@@ -63,7 +63,7 @@ public class UserThread extends Thread {
             case "/register", "/login" -> {
                 UserConnection clientConnection = new UserConnection(clientInput);
                 this.serverMessage = clientConnection.CommandHandler();
-                this.sendMessage("Tried to " + this.clientCommand);
+                this.sendMessage("Hashed password: " + this.serverMessage);
             }
             //server.broadcast(this.serverMessage, this);
             case "/private_chat", "/accept", "/decline", "/msg", "/exit_private_chat" -> {

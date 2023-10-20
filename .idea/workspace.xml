@@ -6,11 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="4190aee2-2537-4425-af85-159ac30cfe62" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/galactic_messenger_client.jar" beforeDir="false" afterPath="$PROJECT_DIR$/galactic_messenger_client.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/galactic_messenger_server.jar" beforeDir="false" afterPath="$PROJECT_DIR$/galactic_messenger_server.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/ServerConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/ServerConnection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/UserThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/UserThread.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/database/DbConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/database/DbConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/GroupChat.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/GroupChat.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/UserConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/UserConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/interfaces/Encryption.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/interfaces/Encryption.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -130,7 +130,7 @@
       <workItem from="1697614452318" duration="14174000" />
       <workItem from="1697708205491" duration="5099000" />
       <workItem from="1697720136079" duration="3497000" />
-      <workItem from="1697786175476" duration="10649000" />
+      <workItem from="1697786175476" duration="17911000" />
     </task>
     <servers />
   </component>
