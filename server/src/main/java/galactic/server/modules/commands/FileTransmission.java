@@ -9,6 +9,7 @@ import galactic.server.modules.commands.interfaces.Command;
 public class FileTransmission implements Command {
     private String command, room, file;
 
+
     public FileTransmission(List<String> clientInput) {
         this.command = clientInput.get(0);
         this.room = clientInput.size() < 2 ? null : clientInput.get(1);
@@ -26,6 +27,8 @@ public class FileTransmission implements Command {
             default -> { return "Invalid file command"; }
         }
     }
+
+
 
     private String FileUpload() {
         return "";

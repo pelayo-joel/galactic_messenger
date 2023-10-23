@@ -1,7 +1,6 @@
 package galactic.server.modules.commands;
 
 
-import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -9,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-import java.security.MessageDigest;
 
 import galactic.server.modules.commands.interfaces.Command;
 import galactic.server.modules.commands.interfaces.Encryption;
@@ -27,7 +25,6 @@ public class UserConnection implements Command, Encryption {
 
 
 
-
     @Override
     public String CommandHandler() {
         switch (this.command) {
@@ -37,59 +34,58 @@ public class UserConnection implements Command, Encryption {
         }
     }
 
+    public String getUsername() {
+        return username;
+    }
+
 
     @Override
-    public String Hashing() {
-        String hashedPassword = "";
+    public String Hashing() throws InvalidKeySpecException, NoSuchAlgorithmException {
+        char[] chars = this.password.toCharArray();
+        byte[] salt = new byte[16];
 
-        try {
-            char[] chars = this.password.toCharArray();
-            //byte[] salt = Salting().getBytes();
-            byte[] salt = new byte[16];
+        PBEKeySpec pbfKey = new PBEKeySpec(chars, salt, 1000, 64*8);
+        SecretKeyFactory algoEncryption = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 
-            PBEKeySpec pbfKey = new PBEKeySpec(chars, salt, 1000, 64*8);
-            SecretKeyFactory algoEncryption = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-
-            byte[] hash = algoEncryption.generateSecret(pbfKey).getEncoded();
-            //hashedPassword = Encryption.Decrypt(hash) + Encryption.Decrypt(salt);
-            hashedPassword = Encryption.Decrypt(hash);
-        }
-        catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            System.out.println("Encryption error");
-            e.printStackTrace();
-        }
-        return hashedPassword;
+        byte[] hash = algoEncryption.generateSecret(pbfKey).getEncoded();
+        return Encryption.Decrypt(hash);
     }
 
     @Override
     public String Salting() throws NoSuchAlgorithmException {
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
-        byte[] salt = new byte[16];
+        byte[] salt = new byte[32];
         sr.nextBytes(salt);
         return Arrays.toString(salt);
     }
 
 
 
-
     private String Register() {
-        String encryptedPassword = "";
-
         try {
-            encryptedPassword = Hashing() + ":" + Encryption.Decrypt(Salting().getBytes());
+            String encryptedPassword = Hashing() + ":" + Salting();
+            //method from database to store a new user with his password
         }
-        catch (NoSuchAlgorithmException e) {
+        catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             System.out.println("Encryption error");
             e.printStackTrace();
         }
-        return encryptedPassword;
+        return "You've been registered as '" + this.username + "'.";
     }
 
     private String Login() {
-        return "";
-    }
+        try {
+            String encryptedPassword = Hashing(), storedPassword = "bruh";
+            String salt = ":" + Salting();
 
-    private void ServerPasswordEncryption() {
-
+            if (!(encryptedPassword + salt).equals((storedPassword + salt))) {
+                return "Authentication failed";
+            }
+        }
+        catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            System.out.println("Encryption error");
+            e.printStackTrace();
+        }
+        return "Welcome back '" + this.username + "'";
     }
 }

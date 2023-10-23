@@ -18,33 +18,32 @@ public class Chat implements Command {
 
 
 
-
     @Override
     public String CommandHandler() {
-        String serverOutput = "";
 
         switch (this.command) {
-            case "/private_chat" -> serverOutput = ChatRequest();
+            case "/private_chat" -> { return ChatRequest(); }
             case "/accept" -> {
-                serverOutput = "accepted";
+                return "accepted";
             }
             case "/decline" -> {
-                serverOutput = "declined";
+                return "declined";
             }
-            case "/msg" -> serverOutput = Message();
+            case "/msg" -> { return Message(); }
             case "/exit_private_chat" -> {
-                serverOutput = "exit";
+                return "exit";
             }
             default -> { return "Invalid chat command"; }
         }
-        return serverOutput;
     }
+
+
 
     private String ChatRequest() {
         return "";
     }
 
     private String Message() {
-        return "";
+        return this.message;
     }
 }

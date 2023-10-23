@@ -2,9 +2,10 @@ package galactic.server.modules.commands.interfaces;
 
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 public interface Encryption {
-    public String Hashing();
+    public String Hashing() throws InvalidKeySpecException, NoSuchAlgorithmException;
     public String Salting() throws NoSuchAlgorithmException;
 
     public static String Decrypt(byte[] array) {

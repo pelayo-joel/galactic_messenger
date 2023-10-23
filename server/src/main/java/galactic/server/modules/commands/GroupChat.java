@@ -1,6 +1,10 @@
 package galactic.server.modules.commands;
 
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
 import java.util.List;
 import java.security.MessageDigest;
 
@@ -9,13 +13,13 @@ import galactic.server.modules.commands.interfaces.Encryption;
 
 
 public class GroupChat implements Command, Encryption {
-    private String command, group, message;
+    private String command, group, thirdArg;
 
 
     public GroupChat(List<String> clientInput) {
         this.command = clientInput.get(0);
         this.group = clientInput.size() < 2 ? null : clientInput.get(1);
-        this.message = clientInput.size() < 3 ? null : clientInput.get(2);
+        this.thirdArg = clientInput.size() < 3 ? null : clientInput.get(2);
     }
 
 
@@ -34,14 +38,29 @@ public class GroupChat implements Command, Encryption {
         }
     }
 
+    public String getGroup() {
+        return group;
+    }
+
+
     @Override
-    public String Hashing() {
-        return "";
+    public String Hashing() throws InvalidKeySpecException, NoSuchAlgorithmException {
+        MessageDigest algo = MessageDigest.getInstance("SHA-512");
+        byte[] encryptionBytes = algo.digest(this.thirdArg.getBytes());
+
+        StringBuilder passwordGeneration = new StringBuilder();
+        for (byte b : encryptionBytes) {
+            passwordGeneration.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
+        }
+        return passwordGeneration.toString();
     }
 
     @Override
-    public String Salting() {
-        return "";
+    public String Salting() throws NoSuchAlgorithmException {
+        SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
+        byte[] salt = new byte[16];
+        sr.nextBytes(salt);
+        return Arrays.toString(salt);
     }
 
 
@@ -51,7 +70,14 @@ public class GroupChat implements Command, Encryption {
     }
 
     private String NewSecureGroup() {
-        return "";
+        try {
+            String encryptedPassword = Hashing() + Salting();
+        }
+        catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            System.out.println("Encryption error");
+            e.printStackTrace();
+        }
+        return "New secure group '" + this.group + "' created";
     }
 
     private String JoinGroup() {
@@ -59,7 +85,15 @@ public class GroupChat implements Command, Encryption {
     }
 
     private String JoinSecureGroup() {
-        return "";
+        try {
+            String encryptedPassword = Hashing();
+            String salt = ":" + Salting();
+        }
+        catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            System.out.println("Encryption error");
+            e.printStackTrace();
+        }
+        return "Joined '" + this.group + "'";
     }
 
     private  String MessageGroup() {
