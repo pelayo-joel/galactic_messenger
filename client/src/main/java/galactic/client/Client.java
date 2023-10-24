@@ -2,10 +2,7 @@ package galactic.client;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 public class Client {
     private static Socket socket;
@@ -15,7 +12,7 @@ public class Client {
     private ObjectOutputStream writer;
 
     public Client(String serverAddress, String port) {
-        user_demands = List.of();
+        user_demands = new ArrayList<>();
         try {
             System.out.println("Creating socket...");
             socket = new Socket(serverAddress, Integer.parseInt(port));
