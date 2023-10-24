@@ -2,19 +2,22 @@ package galactic.client;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class Client {
-    private Socket socket;
+    private static Socket socket;
+
+    private List<String> user_demands;
     private BufferedReader reader;
     private ObjectOutputStream writer;
 
-    public Client(String serverAddress, int port) {
+    public Client(String serverAddress, String port) {
         try {
             System.out.println("Creating socket...");
-            socket = new Socket(serverAddress, port);
+            socket = new Socket(serverAddress, Integer.parseInt(port));
             System.out.println("Socket created.");
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             System.out.println("Reader initialized.");
@@ -28,6 +31,14 @@ public class Client {
     public void sendMessage(String message) {
         try {
             List<String> messageSplit = List.of(message.split(" "));
+            if (messageSplit.get(0).equals("/accept") && messageSplit.get(0).equals("/decline")) {
+                if(user_demands.contains(messageSplit.get(1))) {
+                    user_demands.remove(messageSplit.get(1));
+                }else {
+                    System.out.println("You don't have any demands from this user.");
+                    return;
+                }
+            }
             writer.writeObject(messageSplit);
             writer.flush();
         } catch (IOException e) {
@@ -37,7 +48,13 @@ public class Client {
 
     public String receiveMessage() {
         try {
-            return reader.readLine();
+            String[] message = reader.readLine().split(" ");
+            if (Objects.equals(message[0], "/dprivate")) {
+                user_demands.add(message[1]);
+                return "User " + message[1] + " wants to talk with you.";
+            }else {
+                return Arrays.toString(message);
+            }
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -52,26 +69,41 @@ public class Client {
         }
     }
 
-    public static void main(String[] args) {
+    public void startMessageReceiver() {
+        Thread messageReceiverThread = new Thread(() -> {
+            while (true) {
+                // sleep 1s
+
+                String message = receiveMessage();
+                if (message != null) {
+                    System.out.println("\nServer response: " + message);
+                }
+
+            }
+        });
+        messageReceiverThread.setDaemon(true);
+        messageReceiverThread.start();
+    }
+
+
+    public static void main(String[] args) throws IOException {
         System.out.println("Client start...");
-        Client client = new Client("10.10.1.119", 4269);
+        Client client = new Client(args[0], args[1]);
         System.out.println("Client connected to server");
+
+        client.startMessageReceiver();
 
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.print("Enter a message: ");
             String message = scanner.nextLine();
-            if (message.equals("/disconnect")) {
-                client.sendMessage(message);
-                client.receiveMessage();
-                System.out.println("Successfully disconnected");
+            client.sendMessage(message);
+            if(message.equals("/disconnect")) {
+                System.out.println("Disconnecting...");
+                client.close();
                 break;
-            }
-            else {
-                client.sendMessage(message);
-                String response = client.receiveMessage();
-                System.out.println("Server response: " + response);
             }
         }
     }
 }
+
