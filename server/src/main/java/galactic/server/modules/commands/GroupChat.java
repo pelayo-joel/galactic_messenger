@@ -5,18 +5,24 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.security.MessageDigest;
+import java.util.Set;
 
 import galactic.server.modules.commands.interfaces.Command;
+import galactic.server.modules.commands.interfaces.Communication;
 import galactic.server.modules.commands.interfaces.Encryption;
 
 
-public class GroupChat implements Command, Encryption {
-    private String command, group, thirdArg;
+public class GroupChat implements Command, Communication, Encryption {
+    private final String client;
+    private String command, group, thirdArg, selfMessage;
+    private Set<String> receiver;
 
 
-    public GroupChat(List<String> clientInput) {
+    public GroupChat(List<String> clientInput, String clientName) {
+        this.client = clientName;
         this.command = clientInput.get(0);
         this.group = clientInput.size() < 2 ? null : clientInput.get(1);
         this.thirdArg = clientInput.size() < 3 ? null : clientInput.get(2);
@@ -27,6 +33,7 @@ public class GroupChat implements Command, Encryption {
 
     @Override
     public String CommandHandler() {
+        this.receiver = new HashSet<>();
         switch (this.command) {
             case "/create_group" -> { return NewGroup(); }
             case "/create_secure_group" -> { return NewSecureGroup(); }
@@ -34,13 +41,15 @@ public class GroupChat implements Command, Encryption {
             case "/join_secure_group" -> { return JoinSecureGroup(); }
             case "/msg_group" -> { return MessageGroup(); }
             case "/exit_group" -> { return ExitGroup(); }
-            default -> { return "Invalid group chat command"; }
+            default -> { return null; }
         }
     }
 
-    public String getGroup() {
-        return group;
-    }
+
+    @Override
+    public String ServerResponse() { return this.selfMessage; }
+    @Override
+    public Set<String> GetReceivingParty() { return this.receiver; }
 
 
     @Override
@@ -64,9 +73,15 @@ public class GroupChat implements Command, Encryption {
     }
 
 
+    public String getGroup() {
+        return group;
+    }
+
+
 
     private String NewGroup() {
-        return "";
+
+        return "New group '" + this.group + "' created";
     }
 
     private String NewSecureGroup() {
@@ -81,7 +96,8 @@ public class GroupChat implements Command, Encryption {
     }
 
     private String JoinGroup() {
-        return "";
+        this.selfMessage = "You joined '" + this.group + "'";
+        return this.client + " joined '" + this.group + "'";
     }
 
     private String JoinSecureGroup() {
@@ -93,11 +109,13 @@ public class GroupChat implements Command, Encryption {
             System.out.println("Encryption error");
             e.printStackTrace();
         }
-        return "Joined '" + this.group + "'";
+        this.selfMessage = "You joined the secure group '" + this.group + "'";
+        return this.client + " joined secure group '" + this.group + "'";
     }
 
     private  String MessageGroup() {
-        return "";
+        this.selfMessage = this.client + ": " + this.thirdArg;
+        return this.selfMessage;
     }
 
     private String ExitGroup() {

@@ -3,7 +3,6 @@ package galactic.server.modules;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
 import java.util.List;
 
 import galactic.server.modules.commands.*;
@@ -17,7 +16,6 @@ import galactic.server.modules.commands.*;
 public class UserThread extends Thread {
     private boolean connected = false;
     private String clientName, serverMessage, clientCommand;
-    private List<String> chatRequests;
     private Socket socket;
     private final ServerConnection server;
     private PrintWriter writer;
@@ -35,7 +33,6 @@ public class UserThread extends Thread {
             System.out.println("User connection established");
             ObjectInputStream input = new ObjectInputStream(this.socket.getInputStream());
             this.writer = new PrintWriter(socket.getOutputStream(), true);
-            this.chatRequests = new ArrayList<String>();
 
             do {
                 List<String> userInputs = (List<String>) input.readObject();
@@ -53,15 +50,20 @@ public class UserThread extends Thread {
         }
     }
 
+    public String GetClientName() {
+        return this.clientName;
+    }
+
 
 
     private void CommandHandler(List<String> clientInput) {
         this.clientCommand = clientInput.get(0);
 
         switch (this.clientCommand) {
+
             case "/register", "/login" -> {
                 if (!this.connected) {
-                    UserConnection clientConnection = new UserConnection(clientInput);
+                    UserAuthentication clientConnection = new UserAuthentication(clientInput);
                     this.clientName = clientConnection.getUsername();
                     this.serverMessage = clientConnection.CommandHandler();
                     this.sendMessage(this.serverMessage);
@@ -73,35 +75,37 @@ public class UserThread extends Thread {
                 }
                 else { this.sendMessage("You're already logged in..."); }
             }
-            //server.broadcast(this.serverMessage, this);
+
             case "/private_chat", "/accept", "/decline", "/msg", "/exit_private_chat" -> {
                 if (this.connected) {
                     Chat chat = new Chat(clientInput, this.clientName);
                     this.serverMessage = chat.CommandHandler();
-                    this.sendMessage(this.serverMessage);
-                    server.broadcast("/dprivate " + this.clientName, this);
+                    this.sendMessage(chat.ServerResponse());
+                    server.broadcast(this.serverMessage, chat.GetReceivingParty());
                 }
                 else { this.sendMessage("Log in before chatting with other users"); }
             }
-            //server.broadcast(this.serverMessage, this);
+
             case "/create_group", "/join_group", "/msg_group", "/exit_group", "/create_secure_group", "/join_secure_group" -> {
                 if (this.connected) {
-                    GroupChat group = new GroupChat(clientInput);
+                    GroupChat group = new GroupChat(clientInput, this.clientName);
                     this.serverMessage = group.CommandHandler();
-                    this.sendMessage("Tried to " + this.clientCommand);
+                    this.sendMessage(group.ServerResponse());
+                    server.broadcast(this.serverMessage, group.GetReceivingParty());
                 }
                 else { this.sendMessage("Log in before chatting with a group"); }
             }
-            //server.broadcast(this.serverMessage, this);
+
             case "/upload", "/list_files", "/download" -> {
                 if (this.connected) {
-                    FileTransmission fileTunnel = new FileTransmission(clientInput);
+                    FileTransmission fileTunnel = new FileTransmission(clientInput, this.clientName);
                     this.serverMessage = fileTunnel.CommandHandler();
-                    this.sendMessage("Tried to " + this.clientCommand);
+                    this.sendMessage(fileTunnel.ServerResponse());
+                    server.broadcast(this.serverMessage, fileTunnel.GetReceivingParty());
                 }
                 else { this.sendMessage("Log in before interacting with some files"); }
             }
-            //server.broadcast(this.serverMessage, this);
+
             case "/online_users" -> {
                 if (this.connected) {
                     this.printUsers();
@@ -109,6 +113,7 @@ public class UserThread extends Thread {
                 }
                 else { this.sendMessage("Log in before listing online users"); }
             }
+
             case "/disconnect", "/quit" -> {
                 if (this.connected) {
                     this.sendMessage("Logging out, see you soon !");
@@ -116,7 +121,7 @@ public class UserThread extends Thread {
                 }
                 else { this.sendMessage("Quitting"); }
             }
-            //server.broadcast(this.serverMessage, this);
+
             default -> this.sendMessage("Error when reading command or might be invalid: " + this.clientCommand);
         }
     }

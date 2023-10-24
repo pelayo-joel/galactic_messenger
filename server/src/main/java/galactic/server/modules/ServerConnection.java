@@ -50,9 +50,9 @@ public class ServerConnection {
     /**
      * Delivers a message from one user to others (broadcasting)
      */
-    void broadcast(String message, UserThread excludeUser) {
+    void broadcast(String message, Set<String> clientNames) {
         for (UserThread aUser : userThreads) {
-            if (aUser != excludeUser) {
+            if (clientNames.contains(aUser.GetClientName())) {
                 aUser.sendMessage(message);
             }
         }

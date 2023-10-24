@@ -6,6 +6,7 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
@@ -13,15 +14,16 @@ import galactic.server.modules.commands.interfaces.Command;
 import galactic.server.modules.commands.interfaces.Encryption;
 
 
-public class UserConnection implements Command, Encryption {
+public class UserAuthentication implements Command, Encryption {
     private String command, username, password;
 
 
-    public UserConnection(List<String> clientInput) {
+    public UserAuthentication(List<String> clientInput) {
         this.command = clientInput.get(0);
         this.username = clientInput.get(1);
         this.password = clientInput.get(2);
     }
+
 
 
 
@@ -30,12 +32,8 @@ public class UserConnection implements Command, Encryption {
         switch (this.command) {
             case "/register" -> { return Register(); }
             case "/login" -> { return Login(); }
-            default -> { return "Invalid connection command"; }
+            default -> { return null; }
         }
-    }
-
-    public String getUsername() {
-        return username;
     }
 
 
@@ -60,11 +58,14 @@ public class UserConnection implements Command, Encryption {
     }
 
 
+    public String getUsername() { return username; }
+
+
 
     private String Register() {
         try {
             String encryptedPassword = Hashing() + ":" + Salting();
-            //method from database to store a new user with his password
+            //Needs method from database to store a new user with his password
         }
         catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             System.out.println("Encryption error");
@@ -77,6 +78,8 @@ public class UserConnection implements Command, Encryption {
         try {
             String encryptedPassword = Hashing(), storedPassword = "bruh";
             String salt = ":" + Salting();
+
+            //Needs to retrieve user password from the database and remove the salt
 
             if (!(encryptedPassword + salt).equals((storedPassword + salt))) {
                 return "Authentication failed";
