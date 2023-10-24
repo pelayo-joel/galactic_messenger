@@ -79,7 +79,7 @@ public class UserThread extends Thread {
                     Chat chat = new Chat(clientInput, this.clientName);
                     this.serverMessage = chat.CommandHandler();
                     this.sendMessage(this.serverMessage);
-                    server.broadcast("/dprivate", this);
+                    server.broadcast("/dprivate " + this.clientName, this);
                 }
                 else { this.sendMessage("Log in before chatting with other users"); }
             }
