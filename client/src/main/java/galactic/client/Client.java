@@ -15,6 +15,7 @@ public class Client {
     private ObjectOutputStream writer;
 
     public Client(String serverAddress, String port) {
+        user_demands = List.of();
         try {
             System.out.println("Creating socket...");
             socket = new Socket(serverAddress, Integer.parseInt(port));
