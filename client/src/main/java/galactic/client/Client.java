@@ -51,7 +51,7 @@ public class Client {
                 user_demands.add(message[1]);
                 return "User " + message[1] + " wants to talk with you.";
             }else {
-                return Arrays.toString(message);
+                return message[0] + ": " + message[1];
             }
         } catch (IOException e) {
             e.printStackTrace();
