@@ -46,12 +46,12 @@ public class Client {
 
     public String receiveMessage() {
         try {
-            String[] message = reader.readLine().split(" ");
-            if (Objects.equals(message[0], "/dprivate")) {
-                user_demands.add(message[1]);
-                return "User " + message[1] + " wants to talk with you.";
+            String message = reader.readLine();
+            if (Objects.equals(message.split(" ")[1], "/dprivate")) {
+                user_demands.add(message.split(" ")[1]);
+                return "User " + message.split(" ")[1] + " wants to talk with you.";
             }else {
-                return message[0] + ": " + message[1];
+                return message;
             }
         } catch (IOException e) {
             e.printStackTrace();
