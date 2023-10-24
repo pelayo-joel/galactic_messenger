@@ -7,10 +7,12 @@ import galactic.server.modules.commands.interfaces.Command;
 
 
 public class Chat implements Command {
+    private final String client;
     private String command, username, message;
 
 
-    public Chat(List<String> clientInput) {
+    public Chat(List<String> clientInput, String clientName) {
+        this.client = clientName;
         this.command = clientInput.get(0);
         this.username = clientInput.size() < 2 ? null : clientInput.get(1);
         this.message = clientInput.size() < 3 ? null : clientInput.get(2);
@@ -23,16 +25,10 @@ public class Chat implements Command {
 
         switch (this.command) {
             case "/private_chat" -> { return ChatRequest(); }
-            case "/accept" -> {
-                return "accepted";
-            }
-            case "/decline" -> {
-                return "declined";
-            }
+            case "/accept" -> { return "accepted"; }
+            case "/decline" -> { return "declined"; }
             case "/msg" -> { return Message(); }
-            case "/exit_private_chat" -> {
-                return "exit";
-            }
+            case "/exit_private_chat" -> { return "exit"; }
             default -> { return "Invalid chat command"; }
         }
     }
@@ -44,6 +40,6 @@ public class Chat implements Command {
     }
 
     private String Message() {
-        return this.message;
+        return this.client + ": " + this.message;
     }
 }

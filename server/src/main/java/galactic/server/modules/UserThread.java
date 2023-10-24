@@ -3,12 +3,13 @@ package galactic.server.modules;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import galactic.server.modules.commands.*;
 
 
-/**
+/**=-
  * This thread handles connection for each connected client, so the server
  * can handle multiple clients at the same time.
  *
@@ -16,6 +17,7 @@ import galactic.server.modules.commands.*;
 public class UserThread extends Thread {
     private boolean connected = false;
     private String clientName, serverMessage, clientCommand;
+    private List<String> chatRequests;
     private Socket socket;
     private final ServerConnection server;
     private PrintWriter writer;
@@ -31,25 +33,22 @@ public class UserThread extends Thread {
     public void run() {
         try {
             System.out.println("User connection established");
+            ObjectInputStream input = new ObjectInputStream(this.socket.getInputStream());
+            this.writer = new PrintWriter(socket.getOutputStream(), true);
+            this.chatRequests = new ArrayList<String>();
 
             do {
-
-                ObjectInputStream input = new ObjectInputStream(this.socket.getInputStream());
-                this.writer = new PrintWriter(socket.getOutputStream(), true);
-
                 List<String> userInputs = (List<String>) input.readObject();
-
                 CommandHandler(userInputs);
 
-            } while (!this.clientCommand.equals("/disconnect"));
+            } while (!this.clientCommand.equals("/disconnect") && !this.clientCommand.equals("/quit"));
 
-            this.sendMessage("Logging out, see you soon !");
             server.removeUser(this.clientName, this);
             socket.close();
             System.out.println(this.clientName + " disconnected");
         }
         catch (IOException | ClassNotFoundException ex) {
-            System.out.println("Erreur survenue sur un thread utilisateur: " + ex.getMessage());
+            System.out.println("Error on user thread: " + ex.getMessage());
             ex.printStackTrace();
         }
     }
@@ -66,16 +65,21 @@ public class UserThread extends Thread {
                     this.clientName = clientConnection.getUsername();
                     this.serverMessage = clientConnection.CommandHandler();
                     this.sendMessage(this.serverMessage);
-                    this.connected = true;
+
+                    if (!this.serverMessage.equals("Authentication failed")) {
+                        server.addUserName(clientName);
+                        this.connected = true;
+                    }
                 }
                 else { this.sendMessage("You're already logged in..."); }
             }
             //server.broadcast(this.serverMessage, this);
             case "/private_chat", "/accept", "/decline", "/msg", "/exit_private_chat" -> {
                 if (this.connected) {
-                    Chat chat = new Chat(clientInput);
+                    Chat chat = new Chat(clientInput, this.clientName);
                     this.serverMessage = chat.CommandHandler();
-                    this.sendMessage("Tried to " + this.clientCommand);
+                    this.sendMessage(this.serverMessage);
+                    server.broadcast("/dprivate", this);
                 }
                 else { this.sendMessage("Log in before chatting with other users"); }
             }
@@ -100,15 +104,20 @@ public class UserThread extends Thread {
             //server.broadcast(this.serverMessage, this);
             case "/online_users" -> {
                 if (this.connected) {
-                    printUsers();
+                    this.printUsers();
                     this.sendMessage("Tried to " + this.clientCommand);
                 }
                 else { this.sendMessage("Log in before listing online users"); }
             }
-            //server.broadcast(this.serverMessage, this);
-            default -> {
-                this.sendMessage("Error when reading command or might be invalid: " + this.clientCommand);
+            case "/disconnect", "/quit" -> {
+                if (this.connected) {
+                    this.sendMessage("Logging out, see you soon !");
+                    this.connected = false;
+                }
+                else { this.sendMessage("Quitting"); }
             }
+            //server.broadcast(this.serverMessage, this);
+            default -> this.sendMessage("Error when reading command or might be invalid: " + this.clientCommand);
         }
     }
 
