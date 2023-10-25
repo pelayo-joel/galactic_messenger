@@ -1,20 +1,18 @@
-package galactic.server.modules.commands;
+package galactic.server.modules.commands.implementations;
 
+
+import galactic.server.modules.commands.Commands;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-import galactic.server.modules.commands.interfaces.Command;
-import galactic.server.modules.commands.interfaces.Encryption;
 
-
-public class UserAuthentication implements Command, Encryption {
+public class UserAuthentication extends Commands {
     private String command, username, password;
 
 
@@ -46,7 +44,7 @@ public class UserAuthentication implements Command, Encryption {
         SecretKeyFactory algoEncryption = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 
         byte[] hash = algoEncryption.generateSecret(pbfKey).getEncoded();
-        return Encryption.Decrypt(hash);
+        return Decrypt(hash);
     }
 
     @Override

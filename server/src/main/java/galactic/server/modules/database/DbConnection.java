@@ -15,12 +15,11 @@ public class DbConnection {
 
 
     public DbConnection(int port) {
-        String url = "jdbc:mysql://localhost:3000/galactic_messenger";
+        String url = "jdbc:mysql://localhost:" + port + "/galactic_messenger";
 
         try {
-//            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             this.connection = DriverManager.getConnection(url, "root", "mysqlroot");
-            //System.out.println("Server available at " + this.connection);
         } catch (Exception e) {
             System.out.println(e);
         }

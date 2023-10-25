@@ -6,13 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="4190aee2-2537-4425-af85-159ac30cfe62" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/ServerConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/ServerConnection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/UserThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/UserThread.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/Chat.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/Chat.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/FileTransmission.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/FileTransmission.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/GroupChat.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/GroupChat.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/UserConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/UserAuthentication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/interfaces/Command.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/interfaces/Command.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/Chat.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/implementations/Chat.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/FileTransmission.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/implementations/FileTransmission.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/GroupChat.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/implementations/GroupChat.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/UserAuthentication.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/implementations/UserAuthentication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/interfaces/Command.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/interfaces/Encryption.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/interfaces/Encryption.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/database/DbConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/database/DbConnection.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,8 +43,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -135,6 +136,7 @@
       <workItem from="1697786175476" duration="18039000" />
       <workItem from="1698046775772" duration="12081000" />
       <workItem from="1698134357694" duration="8532000" />
+      <workItem from="1698220336594" duration="5488000" />
     </task>
     <servers />
   </component>

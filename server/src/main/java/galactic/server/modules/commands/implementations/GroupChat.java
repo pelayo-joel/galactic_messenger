@@ -1,5 +1,7 @@
-package galactic.server.modules.commands;
+package galactic.server.modules.commands.implementations;
 
+
+import galactic.server.modules.commands.Commands;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -10,12 +12,8 @@ import java.util.List;
 import java.security.MessageDigest;
 import java.util.Set;
 
-import galactic.server.modules.commands.interfaces.Command;
-import galactic.server.modules.commands.interfaces.Communication;
-import galactic.server.modules.commands.interfaces.Encryption;
 
-
-public class GroupChat implements Command, Communication, Encryption {
+public class GroupChat extends Commands {
     private final String client;
     private String command, group, thirdArg, selfMessage;
     private Set<String> receiver;

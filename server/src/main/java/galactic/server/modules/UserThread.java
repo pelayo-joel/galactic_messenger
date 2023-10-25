@@ -5,7 +5,8 @@ import java.io.*;
 import java.net.*;
 import java.util.List;
 
-import galactic.server.modules.commands.*;
+import galactic.server.modules.commands.Commands;
+import galactic.server.modules.commands.implementations.*;
 
 
 /**=-
@@ -78,7 +79,7 @@ public class UserThread extends Thread {
 
             case "/private_chat", "/accept", "/decline", "/msg", "/exit_private_chat" -> {
                 if (this.connected) {
-                    Chat chat = new Chat(clientInput, this.clientName);
+                    Commands chat = new Chat(clientInput, this.clientName);
                     this.serverMessage = chat.CommandHandler();
                     this.sendMessage(chat.ServerResponse());
                     server.broadcast(this.serverMessage, chat.GetReceivingParty());
@@ -88,7 +89,7 @@ public class UserThread extends Thread {
 
             case "/create_group", "/join_group", "/msg_group", "/exit_group", "/create_secure_group", "/join_secure_group" -> {
                 if (this.connected) {
-                    GroupChat group = new GroupChat(clientInput, this.clientName);
+                    Commands group = new GroupChat(clientInput, this.clientName);
                     this.serverMessage = group.CommandHandler();
                     this.sendMessage(group.ServerResponse());
                     server.broadcast(this.serverMessage, group.GetReceivingParty());
@@ -98,7 +99,7 @@ public class UserThread extends Thread {
 
             case "/upload", "/list_files", "/download" -> {
                 if (this.connected) {
-                    FileTransmission fileTunnel = new FileTransmission(clientInput, this.clientName);
+                    Commands fileTunnel = new FileTransmission(clientInput, this.clientName);
                     this.serverMessage = fileTunnel.CommandHandler();
                     this.sendMessage(fileTunnel.ServerResponse());
                     server.broadcast(this.serverMessage, fileTunnel.GetReceivingParty());

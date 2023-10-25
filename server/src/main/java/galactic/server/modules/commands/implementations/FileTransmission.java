@@ -1,15 +1,14 @@
-package galactic.server.modules.commands;
+package galactic.server.modules.commands.implementations;
 
+
+import galactic.server.modules.commands.Commands;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import galactic.server.modules.commands.interfaces.Command;
-import galactic.server.modules.commands.interfaces.Communication;
 
-
-public class FileTransmission implements Command, Communication {
+public class FileTransmission extends Commands {
     private final String client;
     private String command, room, file, selfMessage;
     private Set<String> receiver;
