@@ -1,8 +1,6 @@
 package galactic.server.modules.commands.implementations;
 
 
-import galactic.server.modules.commands.Commands;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -12,10 +10,12 @@ import java.util.List;
 import java.security.MessageDigest;
 import java.util.Set;
 
+import galactic.server.modules.commands.Commands;
+import galactic.server.modules.commands.interfaces.Encryption;
 
-public class GroupChat extends Commands {
-    private final String client;
-    private String command, group, thirdArg, selfMessage;
+
+public class GroupChat extends Commands implements Encryption {
+    private String group, thirdArg;
     private Set<String> receiver;
 
 
@@ -44,10 +44,6 @@ public class GroupChat extends Commands {
     }
 
 
-    @Override
-    public String ServerResponse() { return this.selfMessage; }
-    @Override
-    public Set<String> GetReceivingParty() { return this.receiver; }
 
 
     @Override
@@ -72,34 +68,54 @@ public class GroupChat extends Commands {
 
 
     public String getGroup() {
-        return group;
+        return this.group;
     }
 
 
 
     private String NewGroup() {
+        if (this.group == null) {
+            return "Invalid usage: missing group\n" +
+                    "Usage: " + this.command + "<group>";
+        }
 
         return "New group '" + this.group + "' created";
     }
 
     private String NewSecureGroup() {
         try {
+            if (this.group == null || this.thirdArg == null) {
+                return "Invalid usage: missing group or password or both\n" +
+                        "Usage: " + this.command + "<group> <password>";
+            }
+
             String encryptedPassword = Hashing() + Salting();
         }
         catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             System.out.println("Encryption error");
             e.printStackTrace();
         }
+
         return "New secure group '" + this.group + "' created";
     }
 
     private String JoinGroup() {
+        if (this.group == null) {
+            return "Invalid usage: missing group\n" +
+                    "Usage: " + this.command + "<group>";
+        }
+
         this.selfMessage = "You joined '" + this.group + "'";
         return this.client + " joined '" + this.group + "'";
     }
 
     private String JoinSecureGroup() {
         try {
+            if (this.group == null || this.thirdArg == null) {
+                return "Invalid usage: missing group or password or both\n" +
+                        "Usage: " + this.command + "<group> <password>";
+            }
+
             String encryptedPassword = Hashing();
             String salt = ":" + Salting();
         }
@@ -107,11 +123,17 @@ public class GroupChat extends Commands {
             System.out.println("Encryption error");
             e.printStackTrace();
         }
+
         this.selfMessage = "You joined the secure group '" + this.group + "'";
         return this.client + " joined secure group '" + this.group + "'";
     }
 
-    private  String MessageGroup() {
+    private String MessageGroup() {
+        if (this.group == null || this.thirdArg == null) {
+            return "Invalid usage: missing group or message or both\n" +
+                    "Usage: " + this.command + "<group> <message>";
+        }
+
         this.selfMessage = this.client + ": " + this.thirdArg;
         return this.selfMessage;
     }

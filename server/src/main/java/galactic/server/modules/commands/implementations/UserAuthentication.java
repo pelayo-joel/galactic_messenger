@@ -1,8 +1,6 @@
 package galactic.server.modules.commands.implementations;
 
 
-import galactic.server.modules.commands.Commands;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -11,14 +9,17 @@ import java.util.List;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+import galactic.server.modules.commands.Commands;
+import galactic.server.modules.commands.interfaces.Encryption;
 
-public class UserAuthentication extends Commands {
-    private String command, username, password;
+
+public class UserAuthentication extends Commands implements Encryption {
+    private String password;
 
 
     public UserAuthentication(List<String> clientInput) {
         this.command = clientInput.get(0);
-        this.username = clientInput.get(1);
+        this.client = clientInput.get(1);
         this.password = clientInput.get(2);
     }
 
@@ -27,6 +28,11 @@ public class UserAuthentication extends Commands {
 
     @Override
     public String CommandHandler() {
+        if (this.client == null || this.password == null) {
+            return "Invalid usage: missing username or password or both\n" +
+                    "Usage: " + this.command + "<username> <password>";
+        }
+
         switch (this.command) {
             case "/register" -> { return Register(); }
             case "/login" -> { return Login(); }
@@ -44,7 +50,7 @@ public class UserAuthentication extends Commands {
         SecretKeyFactory algoEncryption = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 
         byte[] hash = algoEncryption.generateSecret(pbfKey).getEncoded();
-        return Decrypt(hash);
+        return Encryption.Decrypt(hash);
     }
 
     @Override
@@ -55,8 +61,6 @@ public class UserAuthentication extends Commands {
         return Arrays.toString(salt);
     }
 
-
-    public String getUsername() { return username; }
 
 
 
@@ -69,7 +73,7 @@ public class UserAuthentication extends Commands {
             System.out.println("Encryption error");
             e.printStackTrace();
         }
-        return "You've been registered as '" + this.username + "'.";
+        return "You've been registered as '" + this.client + "'.";
     }
 
     private String Login() {
@@ -87,6 +91,6 @@ public class UserAuthentication extends Commands {
             System.out.println("Encryption error");
             e.printStackTrace();
         }
-        return "Welcome back '" + this.username + "'";
+        return "Welcome back '" + this.client + "'";
     }
 }

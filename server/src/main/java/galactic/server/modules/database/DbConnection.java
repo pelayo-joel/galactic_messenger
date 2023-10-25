@@ -13,7 +13,6 @@ public class DbConnection {
     private ResultSet statementResult = null;
 
 
-
     public DbConnection(int port) {
         String url = "jdbc:mysql://localhost:" + port + "/galactic_messenger";
 

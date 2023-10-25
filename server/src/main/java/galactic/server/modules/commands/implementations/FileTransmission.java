@@ -1,16 +1,15 @@
 package galactic.server.modules.commands.implementations;
 
 
-import galactic.server.modules.commands.Commands;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import galactic.server.modules.commands.Commands;
+
 
 public class FileTransmission extends Commands {
-    private final String client;
-    private String command, room, file, selfMessage;
+    private String room, file;
     private Set<String> receiver;
 
 
@@ -35,12 +34,6 @@ public class FileTransmission extends Commands {
         }
     }
 
-
-    @Override
-    public String ServerResponse() { return this.selfMessage; }
-
-    @Override
-    public Set<String> GetReceivingParty() { return this.receiver; }
 
 
 

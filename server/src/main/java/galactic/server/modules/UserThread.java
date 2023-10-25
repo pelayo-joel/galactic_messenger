@@ -60,70 +60,63 @@ public class UserThread extends Thread {
     private void CommandHandler(List<String> clientInput) {
         this.clientCommand = clientInput.get(0);
 
-        switch (this.clientCommand) {
+        if (this.connected) {
+            Commands clientRequest = null;
 
-            case "/register", "/login" -> {
-                if (!this.connected) {
-                    UserAuthentication clientConnection = new UserAuthentication(clientInput);
-                    this.clientName = clientConnection.getUsername();
-                    this.serverMessage = clientConnection.CommandHandler();
-                    this.sendMessage(this.serverMessage);
+            switch (this.clientCommand) {
+                case "/private_chat", "/accept", "/decline", "/msg", "/exit_private_chat" ->
+                        clientRequest = new Chat(clientInput, this.clientName);
 
-                    if (!this.serverMessage.equals("Authentication failed")) {
-                        server.addUserName(clientName);
-                        this.connected = true;
-                    }
-                }
-                else { this.sendMessage("You're already logged in..."); }
+                case "/create_group", "/join_group", "/msg_group", "/exit_group", "/create_secure_group", "/join_secure_group" ->
+                        clientRequest = new GroupChat(clientInput, this.clientName);
+
+                case "/upload", "/list_files", "/download" ->
+                        clientRequest = new FileTransmission(clientInput, this.clientName);
+
+                case "/online_users" ->
+                        this.printUsers();
             }
 
-            case "/private_chat", "/accept", "/decline", "/msg", "/exit_private_chat" -> {
-                if (this.connected) {
-                    Commands chat = new Chat(clientInput, this.clientName);
-                    this.serverMessage = chat.CommandHandler();
-                    this.sendMessage(chat.ServerResponse());
-                    server.broadcast(this.serverMessage, chat.GetReceivingParty());
+            if (clientRequest != null) {
+                this.serverMessage = clientRequest.CommandHandler();
+                if (!this.serverMessage.startsWith("Invalid")) {
+                    this.sendMessage(clientRequest.ServerResponse());
+                    server.broadcast(this.serverMessage, clientRequest.GetReceivingParty());
                 }
-                else { this.sendMessage("Log in before chatting with other users"); }
+                else { this.sendMessage(this.serverMessage); }
             }
-
-            case "/create_group", "/join_group", "/msg_group", "/exit_group", "/create_secure_group", "/join_secure_group" -> {
-                if (this.connected) {
-                    Commands group = new GroupChat(clientInput, this.clientName);
-                    this.serverMessage = group.CommandHandler();
-                    this.sendMessage(group.ServerResponse());
-                    server.broadcast(this.serverMessage, group.GetReceivingParty());
-                }
-                else { this.sendMessage("Log in before chatting with a group"); }
+            else if (this.clientCommand.equals("/register") || this.clientCommand.equals("/login")) {
+                this.sendMessage("You're already logged in, '/disconnect' or '/quit' to quit and log out");
             }
-
-            case "/upload", "/list_files", "/download" -> {
-                if (this.connected) {
-                    Commands fileTunnel = new FileTransmission(clientInput, this.clientName);
-                    this.serverMessage = fileTunnel.CommandHandler();
-                    this.sendMessage(fileTunnel.ServerResponse());
-                    server.broadcast(this.serverMessage, fileTunnel.GetReceivingParty());
-                }
-                else { this.sendMessage("Log in before interacting with some files"); }
+            else if (this.clientCommand.equals("/disconnect") || this.clientCommand.equals("/quit")) {
+                this.connected = false;
+                this.sendMessage("Logging you out, see you soon !");
             }
-
-            case "/online_users" -> {
-                if (this.connected) {
-                    this.printUsers();
-                    this.sendMessage("Tried to " + this.clientCommand);
-                }
-                else { this.sendMessage("Log in before listing online users"); }
+            else {
+                this.sendMessage("Invalid command: " + this.clientCommand + "\n" +
+                            "For 1-to-1 messages: '/private_chat', '/accept', '/decline', '/msg', '/exit_private_chat'\n" +
+                            "For group command: '/create_group', '/join_group', '/msg_group', '/exit_group', '/create_secure_group', '/join_secure_group'\n" +
+                            "For files command: '/upload', '/list_files', '/download'\n" +
+                            "To print online users: '/online_users'\n" +
+                            "To quit and log out from the program: '/disconnect', '/quit'");
             }
+        }
 
-            case "/disconnect", "/quit" -> {
-                if (this.connected) {
-                    this.sendMessage("Logging out, see you soon !");
-                    this.connected = false;
-                }
-                else { this.sendMessage("Quitting"); }
+        else if (this.clientCommand.equals("/login") || this.clientCommand.equals("/register")) {
+            Commands clientConnection = new UserAuthentication(clientInput);
+            this.clientName = clientConnection.getClientName();
+            this.serverMessage = clientConnection.CommandHandler();
+
+            if (!this.serverMessage.startsWith("Invalid") || !this.serverMessage.equals("Authentication failed")) {
+                server.addUserName(this.clientName);
+                this.connected = true;
             }
+            this.sendMessage(this.serverMessage);
+        }
 
-            default -> this.sendMessage("Error when reading command or might be invalid: " + this.clientCommand);
+        else {
+            this.sendMessage("Invalid command: " + this.clientCommand + "\n" +
+                    "Please sign in with '/register' if you're new here or '/login', '/quit' to exit the program");
         }
     }
 

@@ -25,7 +25,7 @@ public class ServerConnection {
     public void execute() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
 
-            database = new DbConnection(port);
+            //database = new DbConnection(port);
 
             InetAddress localHost = InetAddress.getLocalHost();
             System.out.println("Server available at " + localHost.getHostAddress() + ":" + port);

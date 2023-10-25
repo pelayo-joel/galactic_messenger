@@ -1,17 +1,14 @@
 package galactic.server.modules.commands.implementations;
 
 
-import galactic.server.modules.commands.Commands;
-
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+import galactic.server.modules.commands.Commands;
 
 
 public class Chat extends Commands {
-    private final String client;
-    private String command, username, message, selfMessage;
-    private Set<String> receiver;
+    private String username, message;
 
 
     public Chat(List<String> clientInput, String clientName) {
@@ -38,20 +35,25 @@ public class Chat extends Commands {
     }
 
 
-    @Override
-    public String ServerResponse() { return this.selfMessage; }
-    @Override
-    public Set<String> GetReceivingParty() { return this.receiver; }
-
 
 
     private String ChatRequest() {
+        if (this.username == null) {
+            return "Invalid usage: missing username\n" +
+                    "Usage: " + this.command + "<username>";
+        }
+
         this.receiver.add(username);
         this.selfMessage = "Chat request sent to: " + this.username;
         return "/dprivate " + this.client;
     }
 
     private String Accept() {
+        if (this.username == null) {
+            return "Invalid usage: missing username\n" +
+                    "Usage: " + this.command + "<username>";
+        }
+
         //Needs database method to create new room between both users
 
         this.receiver.add(username);
@@ -60,12 +62,21 @@ public class Chat extends Commands {
     }
 
     private String Decline() {
+        if (this.username == null) {
+            return "Invalid usage: missing username\n" +
+                    "Usage: " + this.command + "<username>";
+        }
+
         this.receiver.add(username);
         this.selfMessage = "You've declined a chat with " + username;
         return this.client + " has declined your request to chat with you";
     }
 
     private String Message() {
+        if (this.username == null || this.message == null) {
+            return "Invalid usage: missing username or message or both\n" +
+                    "Usage: " + this.command + "<username> <message>";
+        }
         //Needs database method to store message in message table
 
         this.receiver.add(username);
