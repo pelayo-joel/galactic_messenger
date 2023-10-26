@@ -9,8 +9,11 @@ import galactic.server.modules.commands.Commands;
 
 
 public class FileTransmission extends Commands {
+
     private String room, file;
+
     private Set<String> receiver;
+
 
 
     public FileTransmission(List<String> clientInput, String clientName) {
@@ -19,6 +22,7 @@ public class FileTransmission extends Commands {
         this.room = clientInput.size() < 2 ? null : clientInput.get(1);
         this.file = clientInput.size() < 3 ? null : clientInput.get(2);
     }
+
 
 
 
@@ -38,14 +42,31 @@ public class FileTransmission extends Commands {
 
 
     private String FileUpload() {
+        if (this.room == null || this.file == null) {
+            return "Invalid usage: missing group/username or file path or both\n" +
+                    "    Usage: <command> <group/username> <file path>";
+        }
+
         return "";
     }
+
 
     private String ListFiles() {
+        if (this.room == null || this.file == null) {
+            return "Invalid usage: missing group/username\n" +
+                    "    Usage: <command> <group/username>";
+        }
+
         return "";
     }
 
+
     private String FileDownload() {
+        if (this.room == null || this.file == null) {
+            return "Invalid usage: missing group/username or file path or both\n" +
+                    "    Usage: <command> <group/username> <file name>";
+        }
+
         return "";
     }
 }

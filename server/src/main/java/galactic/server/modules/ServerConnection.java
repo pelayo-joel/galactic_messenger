@@ -12,15 +12,25 @@ import galactic.server.modules.database.DbConnection;
 
 
 public class ServerConnection {
+
     private int port;
+
     private DbConnection database;
+
     private Set<String> userNames = new HashSet<>();
+
     private Set<UserThread> userThreads = new HashSet<>();
+
+
 
     public ServerConnection(int port) {
         this.port = port;
         this.execute();
     }
+
+
+
+
 
     public void execute() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
@@ -37,7 +47,6 @@ public class ServerConnection {
                 UserThread newUser = new UserThread(socket, this);
                 userThreads.add(newUser);
                 newUser.start();
-                //System.out.println("checking");
             }
 
         } catch (IOException ex) {
@@ -50,7 +59,7 @@ public class ServerConnection {
     /**
      * Delivers a message from one user to others (broadcasting)
      */
-    void broadcast(String message, Set<String> clientNames) {
+    public void broadcast(String message, Set<String> clientNames) {
         for (UserThread aUser : userThreads) {
             if (clientNames.contains(aUser.GetClientName())) {
                 aUser.sendMessage(message);
@@ -58,12 +67,14 @@ public class ServerConnection {
         }
     }
 
+
     /**
      * Stores username of the newly connected client.
      */
-    void addUserName(String userName) {
+    public void addUserName(String userName) {
         userNames.add(userName);
     }
+
 
     /**
      * When a client is disconneted, removes the associated username and UserThread
@@ -76,14 +87,16 @@ public class ServerConnection {
         }
     }
 
-    Set<String> getUserNames() {
+
+    public Set<String> getUserNames() {
         return this.userNames;
     }
+
 
     /**
      * Returns true if there are other users connected (not count the currently connected user)
      */
-    boolean hasUsers() {
+    public boolean hasUsers() {
         return !this.userNames.isEmpty();
     }
 }

@@ -11,12 +11,21 @@ import java.security.MessageDigest;
 import java.util.Set;
 
 import galactic.server.modules.commands.Commands;
-import galactic.server.modules.commands.interfaces.Encryption;
+import galactic.server.modules.commands.miscellaneous.Colors;
+import galactic.server.modules.commands.miscellaneous.Encryption;
 
 
 public class GroupChat extends Commands implements Encryption {
+
+    private final String GRP_ARGS_ERROR = "Invalid usage: missing group\n" +
+            "    Usage: <command> <group>",
+            SECURE_GRP_ARGS_ERROR = "Invalid usage: missing group or password or both\n" +
+            "    Usage: <command> <group> <password>";
+
     private String group, thirdArg;
+
     private Set<String> receiver;
+
 
 
     public GroupChat(List<String> clientInput, String clientName) {
@@ -45,7 +54,6 @@ public class GroupChat extends Commands implements Encryption {
 
 
 
-
     @Override
     public String Hashing() throws InvalidKeySpecException, NoSuchAlgorithmException {
         MessageDigest algo = MessageDigest.getInstance("SHA-512");
@@ -58,6 +66,7 @@ public class GroupChat extends Commands implements Encryption {
         return passwordGeneration.toString();
     }
 
+
     @Override
     public String Salting() throws NoSuchAlgorithmException {
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
@@ -67,26 +76,27 @@ public class GroupChat extends Commands implements Encryption {
     }
 
 
+
     public String getGroup() {
         return this.group;
     }
 
 
 
+
     private String NewGroup() {
         if (this.group == null) {
-            return "Invalid usage: missing group\n" +
-                    "Usage: " + this.command + "<group>";
+            return GRP_ARGS_ERROR;
         }
 
-        return "New group '" + this.group + "' created";
+        return Colors.WHITE + "New group '" + Colors.YELLOW + this.group + Colors.WHITE + "' created" + Colors.DEFAULT;
     }
+
 
     private String NewSecureGroup() {
         try {
             if (this.group == null || this.thirdArg == null) {
-                return "Invalid usage: missing group or password or both\n" +
-                        "Usage: " + this.command + "<group> <password>";
+                return SECURE_GRP_ARGS_ERROR;
             }
 
             String encryptedPassword = Hashing() + Salting();
@@ -96,24 +106,24 @@ public class GroupChat extends Commands implements Encryption {
             e.printStackTrace();
         }
 
-        return "New secure group '" + this.group + "' created";
+        return Colors.WHITE + "New secure group '" + Colors.YELLOW + this.group + Colors.WHITE + "' created" + Colors.DEFAULT;
     }
+
 
     private String JoinGroup() {
         if (this.group == null) {
-            return "Invalid usage: missing group\n" +
-                    "Usage: " + this.command + "<group>";
+            return GRP_ARGS_ERROR;
         }
 
-        this.selfMessage = "You joined '" + this.group + "'";
-        return this.client + " joined '" + this.group + "'";
+        this.selfMessage = Colors.WHITE + "You joined '" + Colors.YELLOW + this.group + Colors.WHITE + "'" + Colors.DEFAULT;
+        return Colors.YELLOW + "[" + this.group + "] '" + Colors.BLUE + this.client + Colors.WHITE + "' joined the group" + Colors.DEFAULT;
     }
+
 
     private String JoinSecureGroup() {
         try {
             if (this.group == null || this.thirdArg == null) {
-                return "Invalid usage: missing group or password or both\n" +
-                        "Usage: " + this.command + "<group> <password>";
+                return SECURE_GRP_ARGS_ERROR;
             }
 
             String encryptedPassword = Hashing();
@@ -124,21 +134,27 @@ public class GroupChat extends Commands implements Encryption {
             e.printStackTrace();
         }
 
-        this.selfMessage = "You joined the secure group '" + this.group + "'";
-        return this.client + " joined secure group '" + this.group + "'";
+        this.selfMessage = Colors.WHITE + "You joined the secure group '" + Colors.YELLOW + this.group + Colors.WHITE + "'" + Colors.DEFAULT;
+        return Colors.YELLOW + "[" + this.group + "] '" + Colors.BLUE + this.client + Colors.WHITE + "' joined this secure group" + Colors.DEFAULT;
     }
+
 
     private String MessageGroup() {
         if (this.group == null || this.thirdArg == null) {
             return "Invalid usage: missing group or message or both\n" +
-                    "Usage: " + this.command + "<group> <message>";
+                    "    Usage: <command> <group> <message>";
         }
 
-        this.selfMessage = this.client + ": " + this.thirdArg;
-        return this.selfMessage;
+        this.selfMessage = Colors.YELLOW + "[" + this.group + "] " + Colors.CYAN_UNDERLINED + this.client + Colors.WHITE + ": " + this.thirdArg + Colors.DEFAULT;
+        return Colors.YELLOW + "[" + this.group + "] " + Colors.BLUE + this.client + Colors.WHITE + ": " + this.thirdArg + Colors.DEFAULT;
     }
 
+
     private String ExitGroup() {
-        return "";
+        if (this.group == null) {
+            return GRP_ARGS_ERROR;
+        }
+
+        return Colors.YELLOW + "[" + this.group + "] " + Colors.WHITE + "Someone left the group" + Colors.DEFAULT;
     }
 }

@@ -10,11 +10,14 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 import galactic.server.modules.commands.Commands;
-import galactic.server.modules.commands.interfaces.Encryption;
+import galactic.server.modules.commands.miscellaneous.Colors;
+import galactic.server.modules.commands.miscellaneous.Encryption;
 
 
 public class UserAuthentication extends Commands implements Encryption {
+
     private String password;
+
 
 
     public UserAuthentication(List<String> clientInput) {
@@ -26,11 +29,12 @@ public class UserAuthentication extends Commands implements Encryption {
 
 
 
+
     @Override
     public String CommandHandler() {
         if (this.client == null || this.password == null) {
             return "Invalid usage: missing username or password or both\n" +
-                    "Usage: " + this.command + "<username> <password>";
+                    "    Usage: <command> <username> <password>";
         }
 
         switch (this.command) {
@@ -39,6 +43,7 @@ public class UserAuthentication extends Commands implements Encryption {
             default -> { return null; }
         }
     }
+
 
 
     @Override
@@ -52,6 +57,7 @@ public class UserAuthentication extends Commands implements Encryption {
         byte[] hash = algoEncryption.generateSecret(pbfKey).getEncoded();
         return Encryption.Decrypt(hash);
     }
+
 
     @Override
     public String Salting() throws NoSuchAlgorithmException {
@@ -73,8 +79,9 @@ public class UserAuthentication extends Commands implements Encryption {
             System.out.println("Encryption error");
             e.printStackTrace();
         }
-        return "You've been registered as '" + this.client + "'.";
+        return Colors.GREEN + "You've been registered as '" + this.client + "'." + Colors.DEFAULT;
     }
+
 
     private String Login() {
         try {
@@ -91,6 +98,6 @@ public class UserAuthentication extends Commands implements Encryption {
             System.out.println("Encryption error");
             e.printStackTrace();
         }
-        return "Welcome back '" + this.client + "'";
+        return Colors.GREEN + "Welcome back '" + this.client + "'" + Colors.DEFAULT;
     }
 }
