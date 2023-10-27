@@ -28,9 +28,9 @@ public class Client {
 
     public void sendMessage(String message) {
         try {
-            String[] words = message.split(" ");
-            List<String> messageSplit = new ArrayList<>(Arrays.asList(words));
-            if (messageSplit.get(0).equals("/accept") && messageSplit.get(0).equals("/decline")) {
+            ;
+            List<String> messageSplit = List.of(message.split(" ", 3));
+            if (messageSplit.get(0).equals("/accept") || messageSplit.get(0).equals("/decline")) {
                 if(user_demands.contains(messageSplit.get(1))) {
                     user_demands.remove(messageSplit.get(1));
                 }else {
@@ -48,9 +48,10 @@ public class Client {
     public String receiveMessage() {
         try {
             String message = reader.readLine();
-            if (Objects.equals(message.split(" ")[1], "/dprivate")) {
-                user_demands.add(message.split(" ")[1]);
-                return "User " + message.split(" ")[1] + " wants to talk with you.";
+            if (message.startsWith("/dprivate")) {
+                String userRequest = message.substring(message.lastIndexOf(" ") + 1);
+                user_demands.add(userRequest);
+                return "User " + userRequest + " wants to talk with you.";
             }else {
                 return message;
             }
