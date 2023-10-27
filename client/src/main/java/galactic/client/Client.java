@@ -28,7 +28,8 @@ public class Client {
 
     public void sendMessage(String message) {
         try {
-            List<String> messageSplit = List.of(message.split(" "));
+            String[] words = message.split(" ", 2);
+            List<String> messageSplit = Arrays.asList(words);
             if (messageSplit.get(0).equals("/accept") && messageSplit.get(0).equals("/decline")) {
                 if(user_demands.contains(messageSplit.get(1))) {
                     user_demands.remove(messageSplit.get(1));
@@ -74,7 +75,7 @@ public class Client {
 
                 String message = receiveMessage();
                 if (message != null) {
-                    System.out.println("\nServer response: " + message);
+                    System.out.println(message);
                 }
 
             }
