@@ -1,6 +1,7 @@
 package galactic.server.modules.commands.implementations;
 
 
+import java.net.DatagramPacket;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,7 +11,9 @@ import galactic.server.modules.commands.Commands;
 
 public class FileTransmission extends Commands {
 
-    private String room, file;
+    private DatagramPacket file;
+
+    private String room, fileName;
 
     private Set<String> receiver;
 
@@ -19,8 +22,12 @@ public class FileTransmission extends Commands {
     public FileTransmission(List<String> clientInput, String clientName) {
         this.client = clientName;
         this.command = clientInput.get(0);
-        this.room = clientInput.size() < 2 ? null : clientInput.get(1);
-        this.file = clientInput.size() < 3 ? null : clientInput.get(2);
+        this.room = clientInput.get(1).isEmpty() ? null : clientInput.get(1);
+        this.fileName = clientInput.get(2).isEmpty() ? null : clientInput.get(2);
+
+        if (this.fileName != null && this.fileName.contains("/")) {
+            this.fileName = this.fileName.substring(this.fileName.lastIndexOf("/") + 1);
+        }
     }
 
 
@@ -39,11 +46,21 @@ public class FileTransmission extends Commands {
     }
 
 
+    public DatagramPacket GetFile() {
+        return this.file;
+    }
+
+
+    public void StoreFile(byte[] fileBytes) {
+
+    }
+
+
 
 
     private String FileUpload() {
         if (this.room == null || this.file == null) {
-            return "Invalid usage: missing group/username or file path or both\n" +
+            return "\nInvalid usage: missing group/username or file path or both\n" +
                     "    Usage: <command> <group/username> <file path>";
         }
 
@@ -53,7 +70,7 @@ public class FileTransmission extends Commands {
 
     private String ListFiles() {
         if (this.room == null || this.file == null) {
-            return "Invalid usage: missing group/username\n" +
+            return "\nInvalid usage: missing group/username\n" +
                     "    Usage: <command> <group/username>";
         }
 
@@ -63,7 +80,7 @@ public class FileTransmission extends Commands {
 
     private String FileDownload() {
         if (this.room == null || this.file == null) {
-            return "Invalid usage: missing group/username or file path or both\n" +
+            return "\nInvalid usage: missing group/username or file path or both\n" +
                     "    Usage: <command> <group/username> <file name>";
         }
 

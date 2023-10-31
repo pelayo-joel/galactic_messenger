@@ -1,6 +1,7 @@
 package galactic.server.modules.commands.miscellaneous;
 
 public enum Colors {
+
     DEFAULT("\033[0m"),
     RED("\033[0;31m"),
     GREEN("\033[0;32m"),
@@ -11,11 +12,12 @@ public enum Colors {
     WHITE("\033[0;37m");
 
 
+
     private String code;
 
 
 
-    private Colors(String colorCode) {
+    Colors(String colorCode) {
         this.code = colorCode;
     }
 

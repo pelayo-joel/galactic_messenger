@@ -2,9 +2,7 @@ package galactic.server.modules;
 
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,38 +11,42 @@ import galactic.server.modules.database.DbConnection;
 
 public class ServerConnection {
 
-    private int port;
+    private static int serverPort, databasePort;
 
-    private DbConnection database;
+    private static ServerConnection server = null;
 
-    private Set<String> userNames = new HashSet<>();
+    private static DbConnection database;
 
-    private Set<UserThread> userThreads = new HashSet<>();
+    private static Set<String> userNames = new HashSet<>();
+
+    private static Set<UserThread> userThreads = new HashSet<>();
 
 
 
-    public ServerConnection(int port) {
-        this.port = port;
-        this.execute();
+    private ServerConnection(int port) {
+        serverPort = port;
+        execute();
     }
 
 
 
 
 
-    public void execute() {
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
+    private static void execute() {
+        try (ServerSocket serverSocket = new ServerSocket(serverPort)) {
 
-            //database = new DbConnection(port);
+            database = DbConnection.GetInstance(databasePort);
 
             InetAddress localHost = InetAddress.getLocalHost();
-            System.out.println("Server available at " + localHost.getHostAddress() + ":" + port);
+            System.out.println("Server available at " + localHost.getHostAddress() + ":" + serverPort);
 
             while (true) {
-                Socket socket = serverSocket.accept();
+                Socket messageSocket = serverSocket.accept();
+                DatagramSocket fileSocket = new DatagramSocket(serverPort, messageSocket.getInetAddress());
+
                 System.out.println("New user connected");
 
-                UserThread newUser = new UserThread(socket, this);
+                UserThread newUser = new UserThread(messageSocket, fileSocket);
                 userThreads.add(newUser);
                 newUser.start();
             }
@@ -56,14 +58,38 @@ public class ServerConnection {
     }
 
 
+    public static ServerConnection GetInstance(int port, int dbPort) {
+        if (server == null) {
+            databasePort = dbPort;
+            server = new ServerConnection(port);
+        }
+        return server;
+    }
+
+
     /**
      * Delivers a message from one user to others (broadcasting)
      */
-    public void broadcast(String message, Set<String> clientNames) {
+    public static void messageBroadcast(String message, Set<String> clientNames) {
         for (UserThread aUser : userThreads) {
             if (clientNames.contains(aUser.GetClientName())) {
-                aUser.sendMessage(message);
+                aUser.SendMessage(message);
             }
+        }
+    }
+
+
+    public static void fileBroadcast(DatagramPacket file, Set<String> clientNames) {
+        try {
+            for (UserThread aUser : userThreads) {
+                if (clientNames.contains(aUser.GetClientName())) {
+                    aUser.SendFile(file);
+                }
+            }
+        }
+        catch (Exception e) {
+            System.out.println("Error while sending a file: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -71,7 +97,7 @@ public class ServerConnection {
     /**
      * Stores username of the newly connected client.
      */
-    public void addUserName(String userName) {
+    public static void addUserName(String userName) {
         userNames.add(userName);
     }
 
@@ -79,7 +105,7 @@ public class ServerConnection {
     /**
      * When a client is disconneted, removes the associated username and UserThread
      */
-    void removeUser(String userName, UserThread aUser) {
+    public static void removeUser(String userName, UserThread aUser) {
         boolean removed = userNames.remove(userName);
         if (removed) {
             userThreads.remove(aUser);
@@ -88,15 +114,13 @@ public class ServerConnection {
     }
 
 
-    public Set<String> getUserNames() {
-        return this.userNames;
-    }
+    public static Set<String> getUserNames() { return userNames; }
 
 
     /**
      * Returns true if there are other users connected (not count the currently connected user)
      */
-    public boolean hasUsers() {
-        return !this.userNames.isEmpty();
+    public static boolean hasUsers() {
+        return !userNames.isEmpty();
     }
 }

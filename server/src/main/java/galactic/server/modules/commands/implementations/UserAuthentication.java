@@ -4,6 +4,8 @@ package galactic.server.modules.commands.implementations;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import javax.crypto.SecretKeyFactory;
@@ -12,6 +14,9 @@ import javax.crypto.spec.PBEKeySpec;
 import galactic.server.modules.commands.Commands;
 import galactic.server.modules.commands.miscellaneous.Colors;
 import galactic.server.modules.commands.miscellaneous.Encryption;
+import galactic.server.modules.database.crud.Create;
+import galactic.server.modules.database.crud.Read;
+import galactic.server.modules.database.crud.Update;
 
 
 public class UserAuthentication extends Commands implements Encryption {
@@ -33,7 +38,7 @@ public class UserAuthentication extends Commands implements Encryption {
     @Override
     public String CommandHandler() {
         if (this.client == null || this.password == null) {
-            return "Invalid usage: missing username or password or both\n" +
+            return "\nInvalid usage: missing username or password or both\n" +
                     "    Usage: <command> <username> <password>";
         }
 
@@ -73,31 +78,34 @@ public class UserAuthentication extends Commands implements Encryption {
     private String Register() {
         try {
             String encryptedPassword = Hashing() + ":" + Salting();
-            //Needs method from database to store a new user with his password
+            Create.InsertUser(this.client, encryptedPassword);
         }
         catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             System.out.println("Encryption error");
             e.printStackTrace();
         }
-        return Colors.GREEN + "You've been registered as '" + this.client + "'." + Colors.DEFAULT;
+        return Colors.GREEN + "\nYou've been registered as '" + this.client + "'." + Colors.DEFAULT;
     }
 
 
     private String Login() {
         try {
-            String encryptedPassword = Hashing(), storedPassword = "bruh";
-            String salt = ":" + Salting();
+            ResultSet userReader = Read.User(this.client);
+            String encryptedPassword = Hashing(), storedRawPassword = userReader.getString(3);
+            String storedPassword = storedRawPassword.substring(0, storedRawPassword.lastIndexOf(":"));
+            String newSalt = ":" + Salting();
 
-            //Needs to retrieve user password from the database and remove the salt
-
-            if (!(encryptedPassword + salt).equals((storedPassword + salt))) {
+            if (!(encryptedPassword + newSalt).equals((storedPassword + newSalt))) {
                 return "Authentication failed";
             }
+            else {
+                Update.UserPassword(this.client, storedPassword + newSalt);
+            }
         }
-        catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+        catch (SQLException | NoSuchAlgorithmException | InvalidKeySpecException e) {
             System.out.println("Encryption error");
             e.printStackTrace();
         }
-        return Colors.GREEN + "Welcome back '" + this.client + "'" + Colors.DEFAULT;
+        return Colors.GREEN + "\nWelcome back '" + this.client + "'" + Colors.DEFAULT;
     }
 }

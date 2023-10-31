@@ -5,8 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4190aee2-2537-4425-af85-159ac30cfe62" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/galactic_messenger.sql" beforeDir="false" afterPath="$PROJECT_DIR$/galactic_messenger.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/galactic_messenger_server.jar" beforeDir="false" afterPath="$PROJECT_DIR$/galactic_messenger_server.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/server/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/Server.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/ServerConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/ServerConnection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/UserThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/UserThread.java" afterDir="false" />
@@ -14,7 +17,8 @@
       <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/implementations/FileTransmission.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/implementations/FileTransmission.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/implementations/GroupChat.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/implementations/GroupChat.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/implementations/UserAuthentication.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/implementations/UserAuthentication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/interfaces/Encryption.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/miscellaneous/Encryption.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/miscellaneous/Colors.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/miscellaneous/Colors.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/database/DbConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/database/DbConnection.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,8 +49,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
-        <option value="Class" />
         <option value="Enum" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -70,13 +74,13 @@
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "server",
     "jdk.selected.JAVA_MODULE": "20",
-    "last_opened_file_path": "C:/Users/pelay/dev/remote/school/laplateforme/galactic_messenger_test",
+    "last_opened_file_path": "C:/Users/pelay/dev/remote/school/laplateforme/galactic_messenger",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "onboarding.tips.debug.path": "C:/Users/pelay/dev/remote/school/laplateforme/galactic_messenger_test/server/src/main/java/galactic/server/Main.java",
-    "project.structure.last.edited": "Artifacts",
+    "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
     "vue.rearranger.settings.migration": "true"
@@ -139,7 +143,10 @@
       <workItem from="1698046775772" duration="12081000" />
       <workItem from="1698134357694" duration="8532000" />
       <workItem from="1698220336594" duration="21170000" />
-      <workItem from="1698307370505" duration="16586000" />
+      <workItem from="1698307370505" duration="16800000" />
+      <workItem from="1698392094060" duration="2208000" />
+      <workItem from="1698655580905" duration="23687000" />
+      <workItem from="1698742808305" duration="19048000" />
     </task>
     <servers />
   </component>

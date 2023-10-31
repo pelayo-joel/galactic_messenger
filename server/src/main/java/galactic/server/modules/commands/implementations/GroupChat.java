@@ -13,13 +13,16 @@ import java.util.Set;
 import galactic.server.modules.commands.Commands;
 import galactic.server.modules.commands.miscellaneous.Colors;
 import galactic.server.modules.commands.miscellaneous.Encryption;
+import galactic.server.modules.database.crud.Create;
+import galactic.server.modules.database.crud.Delete;
+import galactic.server.modules.database.crud.Read;
 
 
 public class GroupChat extends Commands implements Encryption {
 
-    private final String GRP_ARGS_ERROR = "Invalid usage: missing group\n" +
+    private final String GRP_ARGS_ERROR = "\nInvalid usage: missing group\n" +
             "    Usage: <command> <group>",
-            SECURE_GRP_ARGS_ERROR = "Invalid usage: missing group or password or both\n" +
+            SECURE_GRP_ARGS_ERROR = "\nInvalid usage: missing group or password or both\n" +
             "    Usage: <command> <group> <password>";
 
     private String group, thirdArg;
@@ -31,8 +34,8 @@ public class GroupChat extends Commands implements Encryption {
     public GroupChat(List<String> clientInput, String clientName) {
         this.client = clientName;
         this.command = clientInput.get(0);
-        this.group = clientInput.size() < 2 ? null : clientInput.get(1);
-        this.thirdArg = clientInput.size() < 3 ? null : clientInput.get(2);
+        this.group = clientInput.get(1).isEmpty() ? null : clientInput.get(1);
+        this.thirdArg = clientInput.get(2).isEmpty() ? null : clientInput.get(2);
     }
 
 
@@ -89,7 +92,10 @@ public class GroupChat extends Commands implements Encryption {
             return GRP_ARGS_ERROR;
         }
 
-        return Colors.WHITE + "New group '" + Colors.YELLOW + this.group + Colors.WHITE + "' created" + Colors.DEFAULT;
+        Create.InsertRoom(this.group, true, false, null);
+        Create.InsertUserInRoom(this.client, this.group);
+
+        return Colors.WHITE + "\nNew group '" + Colors.YELLOW + this.group + Colors.WHITE + "' created" + Colors.DEFAULT;
     }
 
 
@@ -99,6 +105,9 @@ public class GroupChat extends Commands implements Encryption {
                 return SECURE_GRP_ARGS_ERROR;
             }
 
+            Create.InsertRoom(this.group, true, true, this.thirdArg);
+            Create.InsertUserInRoom(this.client, this.group);
+
             String encryptedPassword = Hashing() + Salting();
         }
         catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
@@ -106,7 +115,7 @@ public class GroupChat extends Commands implements Encryption {
             e.printStackTrace();
         }
 
-        return Colors.WHITE + "New secure group '" + Colors.YELLOW + this.group + Colors.WHITE + "' created" + Colors.DEFAULT;
+        return Colors.WHITE + "\nNew secure group '" + Colors.YELLOW + this.group + Colors.WHITE + "' created" + Colors.DEFAULT;
     }
 
 
@@ -115,8 +124,10 @@ public class GroupChat extends Commands implements Encryption {
             return GRP_ARGS_ERROR;
         }
 
-        this.selfMessage = Colors.WHITE + "You joined '" + Colors.YELLOW + this.group + Colors.WHITE + "'" + Colors.DEFAULT;
-        return Colors.YELLOW + "[" + this.group + "] '" + Colors.BLUE + this.client + Colors.WHITE + "' joined the group" + Colors.DEFAULT;
+        Create.InsertUserInRoom(this.client, this.group);
+
+        this.selfMessage = Colors.WHITE + "\nYou joined '" + Colors.YELLOW + this.group + Colors.WHITE + "'" + Colors.DEFAULT;
+        return Colors.YELLOW + "\n[" + this.group + "] '" + Colors.BLUE + this.client + Colors.WHITE + "' joined the group" + Colors.DEFAULT;
     }
 
 
@@ -134,19 +145,24 @@ public class GroupChat extends Commands implements Encryption {
             e.printStackTrace();
         }
 
-        this.selfMessage = Colors.WHITE + "You joined the secure group '" + Colors.YELLOW + this.group + Colors.WHITE + "'" + Colors.DEFAULT;
-        return Colors.YELLOW + "[" + this.group + "] '" + Colors.BLUE + this.client + Colors.WHITE + "' joined this secure group" + Colors.DEFAULT;
+        Create.InsertUserInRoom(this.client, this.group);
+
+        this.selfMessage = Colors.WHITE + "\nYou joined the secure group '" + Colors.YELLOW + this.group + Colors.WHITE + "'" + Colors.DEFAULT;
+        return Colors.YELLOW + "\n[" + this.group + "] '" + Colors.BLUE + this.client + Colors.WHITE + "' joined this secure group" + Colors.DEFAULT;
     }
 
 
     private String MessageGroup() {
         if (this.group == null || this.thirdArg == null) {
-            return "Invalid usage: missing group or message or both\n" +
+            return "\nInvalid usage: missing group or message or both\n" +
                     "    Usage: <command> <group> <message>";
         }
 
-        this.selfMessage = Colors.YELLOW + "[" + this.group + "] " + Colors.CYAN_UNDERLINED + this.client + Colors.WHITE + ": " + this.thirdArg + Colors.DEFAULT;
-        return Colors.YELLOW + "[" + this.group + "] " + Colors.BLUE + this.client + Colors.WHITE + ": " + this.thirdArg + Colors.DEFAULT;
+        //Create.InsertMessage(this.thirdArg, this.client, this.group);
+        this.receiver = Read.GroupUsers(this.group);
+
+        this.selfMessage = Colors.YELLOW + "\n[" + this.group + "] " + Colors.CYAN_UNDERLINED + this.client + Colors.WHITE + ": " + this.thirdArg + Colors.DEFAULT;
+        return Colors.YELLOW + "\n[" + this.group + "] " + Colors.BLUE + this.client + Colors.WHITE + ": " + this.thirdArg + Colors.DEFAULT;
     }
 
 
@@ -155,6 +171,8 @@ public class GroupChat extends Commands implements Encryption {
             return GRP_ARGS_ERROR;
         }
 
-        return Colors.YELLOW + "[" + this.group + "] " + Colors.WHITE + "Someone left the group" + Colors.DEFAULT;
+        Delete.UserFromGroup(this.group, this.client);
+
+        return Colors.YELLOW + "\n[" + this.group + "] " + Colors.WHITE + "Someone left the group" + Colors.DEFAULT;
     }
 }

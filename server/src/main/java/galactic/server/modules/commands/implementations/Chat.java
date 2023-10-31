@@ -6,14 +6,16 @@ import java.util.List;
 
 import galactic.server.modules.commands.Commands;
 import galactic.server.modules.commands.miscellaneous.Colors;
+import galactic.server.modules.database.crud.Create;
+import galactic.server.modules.database.crud.Read;
 
 
 public class Chat extends Commands {
 
     private final String
-            CHAT_RQST_ARGS_ERROR = "Invalid usage: missing username\n" +
+            CHAT_RQST_ARGS_ERROR = "\nInvalid usage: missing username\n" +
             "    Usage: <command> <username>",
-            CHAT_ARGS_ERROR = "Invalid usage: missing username or message or both\n" +
+            CHAT_ARGS_ERROR = "\nInvalid usage: missing username or message or both\n" +
                     "    Usage: <command> <username> <message>";
 
     private String username, message;
@@ -23,8 +25,8 @@ public class Chat extends Commands {
     public Chat(List<String> clientInput, String clientName) {
         this.client = clientName;
         this.command = clientInput.get(0);
-        this.username = clientInput.size() < 2 ? null : clientInput.get(1);
-        this.message = clientInput.size() < 3 ? null : clientInput.get(2);
+        this.username = clientInput.get(1).isEmpty() ? null : clientInput.get(1);
+        this.message = clientInput.get(2).isEmpty() ? null : clientInput.get(2);
     }
 
 
@@ -52,42 +54,48 @@ public class Chat extends Commands {
             return CHAT_RQST_ARGS_ERROR;
         }
 
-        this.receiver.add(username);
-        this.selfMessage = "Chat request sent to: " + this.username + Colors.DEFAULT;
-        return Colors.WHITE + "/dprivate " + this.client + Colors.DEFAULT;
+        this.receiver.add(this.username);
+        this.selfMessage = "\nChat request sent to: " + this.username + Colors.DEFAULT;
+        return Colors.WHITE + "\n/dprivate " + this.client + Colors.DEFAULT;
     }
+
 
     private String Accept() {
         if (this.username == null) {
             return CHAT_RQST_ARGS_ERROR;
         }
 
+        Create.InsertRoom(null, false, false, null);
+        //Create.InsertUserInRoom();
         //Needs database method to create new room between both users
 
-        this.receiver.add(username);
-        this.selfMessage = "You've accepted to chat with " + this.username + Colors.DEFAULT;
-        return Colors.GREEN + this.client + " has accepted your request to chat with you" + Colors.DEFAULT;
+        this.receiver.add(this.username);
+        this.selfMessage = "\nYou've accepted to chat with " + this.username + Colors.DEFAULT;
+        return Colors.GREEN + "\n" + this.client + " has accepted your request to chat with you" + Colors.DEFAULT;
     }
+
 
     private String Decline() {
         if (this.username == null) {
             return CHAT_RQST_ARGS_ERROR;
         }
 
-        this.receiver.add(username);
-        this.selfMessage = "You've declined a chat with " + this.username + Colors.DEFAULT;
-        return Colors.RED + this.client + " has declined your request to chat with you" + Colors.DEFAULT;
+        this.receiver.add(this.username);
+        this.selfMessage = "\nYou've declined a chat with " + this.username + Colors.DEFAULT;
+        return Colors.RED + "\n" + this.client + " has declined your request to chat with you" + Colors.DEFAULT;
     }
+
 
     private String Message() {
         if (this.username == null || this.message == null) {
             return CHAT_ARGS_ERROR;
         }
 
-        //Needs database method to store message in message table
+        //Create.InsertMessage(this.message, this.client, this.client + "-" + this.username);
+        this.receiver.add(this.username);
 
         this.receiver.add(username);
-        this.selfMessage = Colors.PURPLE + "<private> " + Colors.CYAN_UNDERLINED + this.client + Colors.WHITE + ": " + this.message + Colors.DEFAULT;
-        return Colors.PURPLE + "<private> " + Colors.BLUE + this.client + Colors.WHITE + ": " + this.message + Colors.DEFAULT;
+        this.selfMessage = Colors.PURPLE + "\n<private> " + Colors.CYAN_UNDERLINED + this.client + Colors.WHITE + ": " + this.message + Colors.DEFAULT;
+        return Colors.PURPLE + "\n<private> " + Colors.BLUE + this.client + Colors.WHITE + ": " + this.message + Colors.DEFAULT;
     }
 }
