@@ -5,7 +5,9 @@ import galactic.server.modules.database.DbConnection;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -49,6 +51,27 @@ public class Read extends DbConnection {
     }
 
 
+    public static byte[] FileData(String fileName, String roomName) {
+        byte[] fileBytes = null;
+
+        try{
+            String createQuery = "SELECT file FROM files WHERE id = (SELECT id FROM files WHERE fileName = ?);";
+            sqlStatement = connection.prepareStatement(createQuery);
+
+            sqlStatement.setString(1, fileName);
+
+            statementResult = sqlStatement.executeQuery();
+            fileBytes = statementResult.getBytes("file");
+        }
+        catch (SQLException e) {
+            System.out.println("Error in database: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return fileBytes;
+    }
+
+
     public static int RoomId(String roomName) {
         int roomId = 0;
         try{
@@ -66,6 +89,31 @@ public class Read extends DbConnection {
             e.printStackTrace();
         }
         return roomId;
+    }
+
+
+    public static List<String> RoomFiles(String roomName) {
+        List<String> fileList = new ArrayList<>();
+
+        try{
+            String createQuery = "SELECT fileName FROM files " +
+                    "INNER JOIN room ON room.id = files.idRoom " +
+                    "WHERE room.name = ?;";
+            sqlStatement = connection.prepareStatement(createQuery);
+
+            sqlStatement.setString(1, roomName);
+
+            statementResult = sqlStatement.executeQuery();
+
+            while(statementResult.next()) {
+                fileList.add(statementResult.getString(1));
+            }
+        }
+        catch (SQLException e) {
+            System.out.println("Error in database: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return fileList;
     }
 
 

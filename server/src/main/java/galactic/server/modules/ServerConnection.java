@@ -35,7 +35,7 @@ public class ServerConnection {
     private static void execute() {
         try (ServerSocket serverSocket = new ServerSocket(serverPort)) {
 
-            database = DbConnection.GetInstance(databasePort);
+            DbConnection.GetInstance(databasePort);
 
             InetAddress localHost = InetAddress.getLocalHost();
             System.out.println("Server available at " + localHost.getHostAddress() + ":" + serverPort);
@@ -75,21 +75,6 @@ public class ServerConnection {
             if (clientNames.contains(aUser.GetClientName())) {
                 aUser.SendMessage(message);
             }
-        }
-    }
-
-
-    public static void fileBroadcast(DatagramPacket file, Set<String> clientNames) {
-        try {
-            for (UserThread aUser : userThreads) {
-                if (clientNames.contains(aUser.GetClientName())) {
-                    aUser.SendFile(file);
-                }
-            }
-        }
-        catch (Exception e) {
-            System.out.println("Error while sending a file: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 

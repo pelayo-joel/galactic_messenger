@@ -104,7 +104,6 @@ public class UserThread extends Thread {
                 return;
             }
 
-
             if (this.clientCommand.equals("/download")) {
                 DatagramPacket fileSend = ((FileTransmission) clientRequest).GetFile();
                 this.SendFile(fileSend);
@@ -199,6 +198,9 @@ public class UserThread extends Thread {
                     "Please sign in with '/register' if you're new here or '/login', '/quit' to exit the program");
         }
     }
+
+
+
 
 
     /**

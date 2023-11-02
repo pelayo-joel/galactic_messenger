@@ -3,6 +3,7 @@ package galactic.server.modules.database.crud;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -112,19 +113,26 @@ public class Create extends DbConnection {
 //    }
 
 
-    public static void InsertFile(byte[] fileUploadBytes, String groupName) {
-        Object dateParam = new Timestamp(System.currentTimeMillis());
-        int roomId = Read.RoomId(groupName);
+    public static void InsertFile(byte[] file, String fileName, String groupName) {
+        try {
+            Object dateParam = new Timestamp(System.currentTimeMillis());
+            int roomId = Read.RoomId(groupName);
 
 
-        String createQuery = "INSERT INTO files (date, idRoom, file) VALUES (?, ?, ?, ?);";
-        //sqlStatement = connection.prepareStatement(createQuery);
+            String createQuery = "INSERT INTO files (date, fileName, file, idRoom) VALUES (?, ?, ?, ?);";
+            sqlStatement = connection.prepareStatement(createQuery);
 
 
-        //sqlStatement.setObject(1, dateParam);
-        //sqlStatement.setString(2, roomId);
-        //sqlStatement.setBlob(3, fileUploadBytes);
+            sqlStatement.setObject(1, dateParam);
+            sqlStatement.setString(2, fileName);
+            sqlStatement.setBytes(3, file);
+            sqlStatement.setInt(4, roomId);
 
-        //sqlStatement.executeQuery();
+            sqlStatement.executeQuery();
+        }
+        catch (SQLException e) {
+            System.out.println("Error when storing the file: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
