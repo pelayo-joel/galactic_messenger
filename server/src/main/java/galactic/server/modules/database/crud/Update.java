@@ -36,7 +36,24 @@ public class Update extends DbConnection {
             sqlStatement.setString(1, newPassword);
             sqlStatement.setString(2, username);
 
-            sqlStatement.executeQuery();
+            sqlStatement.execute();
+        }
+        catch (SQLException e) {
+            System.out.println("Error in database: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void GroupPassword(String groupName, String newPassword) {
+        try{
+            String createQuery = "UPDATE room SET password = ? WHERE name = ?;";
+            sqlStatement = connection.prepareStatement(createQuery);
+
+            sqlStatement.setString(1, newPassword);
+            sqlStatement.setString(2, groupName);
+
+            sqlStatement.execute();
         }
         catch (SQLException e) {
             System.out.println("Error in database: " + e.getMessage());

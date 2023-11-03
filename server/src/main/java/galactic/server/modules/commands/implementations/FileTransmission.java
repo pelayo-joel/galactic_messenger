@@ -1,11 +1,8 @@
 package galactic.server.modules.commands.implementations;
 
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.DatagramPacket;
-import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,16 +16,14 @@ public class FileTransmission extends Commands {
 
     private DatagramPacket file;
 
-    private String room, fileName;
-
-    private Set<String> receiver;
+    private String canal, fileName;
 
 
 
     public FileTransmission(List<String> clientInput, String clientName) {
         this.client = clientName;
         this.command = clientInput.get(0);
-        this.room = clientInput.get(1).isEmpty() ? null : clientInput.get(1);
+        this.canal = clientInput.get(1).isEmpty() ? null : clientInput.get(1);
         this.fileName = clientInput.get(2).isEmpty() ? null : clientInput.get(2);
 
         if (this.fileName != null && this.fileName.contains("/")) {
@@ -53,54 +48,74 @@ public class FileTransmission extends Commands {
 
 
     public DatagramPacket GetFile() {
-        byte[] fileData = Read.FileData(this.fileName, this.room);
+        byte[] fileData = Read.FileData(this.fileName);
         this.file = new DatagramPacket(fileData, fileData.length);
 
-        if (Read.GroupUsers(this.room).contains(this.client)) {
-           return null;
+        if (Read.GroupUsers(this.canal).contains(this.client) || !(Read.ChatId(this.client, this.canal) == 0)) {
+           return this.file;
         }
 
-        return this.file;
+        return null;
     }
 
 
     public void StoreFile(byte[] fileBytes) {
-        Create.InsertFile(fileBytes, this.fileName, this.room);
+        if(Read.AllGroupNames().contains(this.canal)) {
+            Create.FileInGroup(fileBytes, this.fileName, this.canal);
+        }
+        else if (Read.AllUsernames().contains(this.canal)) {
+            Create.FileInChat(fileBytes, this.fileName, this.client, this.canal);
+        }
+        else {
+            this.selfMessage = "User or group might not exist";
+            return;
+        }
+        this.selfMessage = "'" + this.fileName + "' has been uploaded to the server";
     }
 
 
 
 
     private String FileUpload() {
-        if (this.room == null || this.file == null) {
+        if (this.canal == null || this.file == null) {
             return "\nInvalid usage: missing group/username or file path or both\n" +
                     "    Usage: <command> <group/username> <file path>";
         }
 
-        this.selfMessage = "'" + this.fileName + "' has been uploaded to the server";
         return "'" + this.fileName + "' is available for you on the server";
     }
 
 
     private String ListFiles() {
-        if (this.room == null || this.file == null) {
+        if (this.canal == null || this.file == null) {
             return "\nInvalid usage: missing group/username\n" +
                     "    Usage: <command> <group/username>";
         }
 
-        StringBuilder response = new StringBuilder("Files in [" + this.room + "]: ");
-        List<String> fileList = Read.RoomFiles(this.room);
+        StringBuilder response;
+        List<String> fileList;
+        if(Read.AllGroupNames().contains(this.canal)) {
+            response = new StringBuilder("Files in [" + this.canal + "]: ");
+            fileList = Read.GroupFiles(this.canal);
+        }
+        else if (Read.AllUsernames().contains(this.canal)) {
+            response = new StringBuilder("Files available between you & " + this.canal + ": ");
+            fileList = Read.ChatFiles(this.canal);
+        }
+        else {
+            return "Username or group name invalid";
+        }
+
         for (String file : fileList) {
             response.append(file).append(", ");
         }
-
         response.substring(0, response.length() - 2);
         return response.toString();
     }
 
 
     private String FileDownload() {
-        if (this.room == null || this.file == null) {
+        if (this.canal == null || this.file == null) {
             return "\nInvalid usage: missing group/username or file path or both\n" +
                     "    Usage: <command> <group/username> <file name>";
         }

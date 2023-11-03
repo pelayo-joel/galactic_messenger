@@ -78,7 +78,12 @@ public class UserAuthentication extends Commands implements Encryption {
     private String Register() {
         try {
             String encryptedPassword = Hashing() + ":" + Salting();
-            Create.InsertUser(this.client, encryptedPassword);
+            System.out.println(encryptedPassword.length());
+
+            if (!Read.User(this.client, "id").isEmpty()) {
+                return "Invalid username: '" + this.client + "' already exists";
+            }
+            Create.User(this.client, encryptedPassword);
         }
         catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             System.out.println("Encryption error");
@@ -90,8 +95,7 @@ public class UserAuthentication extends Commands implements Encryption {
 
     private String Login() {
         try {
-            ResultSet userReader = Read.User(this.client);
-            String encryptedPassword = Hashing(), storedRawPassword = userReader.getString(3);
+            String encryptedPassword = Hashing(), storedRawPassword = Read.User(this.client, "password");
             String storedPassword = storedRawPassword.substring(0, storedRawPassword.lastIndexOf(":"));
             String newSalt = ":" + Salting();
 
@@ -102,7 +106,7 @@ public class UserAuthentication extends Commands implements Encryption {
                 Update.UserPassword(this.client, storedPassword + newSalt);
             }
         }
-        catch (SQLException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+        catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             System.out.println("Encryption error");
             e.printStackTrace();
         }

@@ -33,7 +33,8 @@ public class Read extends DbConnection {
 //    }
 
 
-    public static ResultSet User(String username) {
+    public static String User(String username, String usersField) {
+        String fieldValue = "";
         try{
             String createQuery = "SELECT * FROM users WHERE username = ?;";
             sqlStatement = connection.prepareStatement(createQuery);
@@ -41,17 +42,64 @@ public class Read extends DbConnection {
             sqlStatement.setString(1, username);
 
             statementResult = sqlStatement.executeQuery();
+            while(statementResult.next()) {
+                fieldValue = statementResult.getString(usersField);
+            }
         }
         catch (SQLException e) {
             System.out.println("Error in database: " + e.getMessage());
             e.printStackTrace();
         }
 
-        return statementResult;
+        return fieldValue;
     }
 
 
-    public static byte[] FileData(String fileName, String roomName) {
+    public static String SecureGroupPassword(String groupName) {
+        String groupPassword = "";
+        try{
+            String createQuery = "SELECT password FROM room WHERE name = ?;";
+            sqlStatement = connection.prepareStatement(createQuery);
+
+            sqlStatement.setString(1, groupName);
+
+            statementResult = sqlStatement.executeQuery();
+
+            while(statementResult.next()) {
+                groupPassword = statementResult.getString("password");
+            }
+        }
+        catch (SQLException e) {
+            System.out.println("Error in database: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return groupPassword;
+    }
+
+
+    public static List<String> AllUsernames() {
+        List<String> userList = new ArrayList<>();
+
+        try{
+            String createQuery = "SELECT username FROM user;";
+            sqlStatement = connection.prepareStatement(createQuery);
+
+            statementResult = sqlStatement.executeQuery();
+
+            while(statementResult.next()) {
+                userList.add(statementResult.getString("username"));
+            }
+        }
+        catch (SQLException e) {
+            System.out.println("Error in database: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return userList;
+    }
+
+
+    public static byte[] FileData(String fileName) {
         byte[] fileBytes = null;
 
         try{
@@ -61,7 +109,9 @@ public class Read extends DbConnection {
             sqlStatement.setString(1, fileName);
 
             statementResult = sqlStatement.executeQuery();
-            fileBytes = statementResult.getBytes("file");
+            while(statementResult.next()) {
+                fileBytes = statementResult.getBytes("file");
+            }
         }
         catch (SQLException e) {
             System.out.println("Error in database: " + e.getMessage());
@@ -72,7 +122,7 @@ public class Read extends DbConnection {
     }
 
 
-    public static int RoomId(String roomName) {
+    public static int GroupId(String roomName) {
         int roomId = 0;
         try{
             String createQuery = "SELECT id FROM room WHERE name = ?;";
@@ -82,7 +132,9 @@ public class Read extends DbConnection {
 
             statementResult = sqlStatement.executeQuery();
 
-            roomId = statementResult.getInt(1);
+            while(statementResult.next()) {
+                roomId = statementResult.getInt(1);
+            }
         }
         catch (SQLException e) {
             System.out.println("Error in database: " + e.getMessage());
@@ -92,7 +144,54 @@ public class Read extends DbConnection {
     }
 
 
-    public static List<String> RoomFiles(String roomName) {
+    public static int ChatId(String clientName, String username) {
+        int roomId = 0;
+        try{
+            String createQuery = "SELECT id FROM room " +
+                    "INNER JOIN room_participants ON room_participants.idRoom = room.id " +
+                    "INNER JOIN user ON user.id = room_particpants.idUser " +
+                    "WHERE room.type = 0 AND user.username = ? OR user.username = ?;";
+            sqlStatement = connection.prepareStatement(createQuery);
+
+            sqlStatement.setString(1, clientName);
+            sqlStatement.setString(2, username);
+
+            statementResult = sqlStatement.executeQuery();
+
+            while(statementResult.next()) {
+                roomId = statementResult.getInt(1);
+            }
+        }
+        catch (SQLException e) {
+            System.out.println("Error in database: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return roomId;
+    }
+
+
+    public static List<String> AllGroupNames() {
+        List<String> groupList = new ArrayList<>();
+
+        try{
+            String createQuery = "SELECT name FROM room;";
+            sqlStatement = connection.prepareStatement(createQuery);
+
+            statementResult = sqlStatement.executeQuery();
+
+            while(statementResult.next()) {
+                groupList.add(statementResult.getString("name"));
+            }
+        }
+        catch (SQLException e) {
+            System.out.println("Error in database: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return groupList;
+    }
+
+
+    public static List<String> GroupFiles(String roomName) {
         List<String> fileList = new ArrayList<>();
 
         try{
@@ -102,6 +201,33 @@ public class Read extends DbConnection {
             sqlStatement = connection.prepareStatement(createQuery);
 
             sqlStatement.setString(1, roomName);
+
+            statementResult = sqlStatement.executeQuery();
+
+            while(statementResult.next()) {
+                fileList.add(statementResult.getString(1));
+            }
+        }
+        catch (SQLException e) {
+            System.out.println("Error in database: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return fileList;
+    }
+
+
+    public static List<String> ChatFiles(String username) {
+        List<String> fileList = new ArrayList<>();
+
+        try{
+            String createQuery = "SELECT fileName FROM files " +
+                    "INNER JOIN room ON room.id = files.idRoom " +
+                    "INNER JOIN room_participants ON room_participants.idRoom = room.id " +
+                    "INNER JOIN user ON user.id = room_participants.idUser " +
+                    "WHERE user.username = ? AND room.type = 0;";
+            sqlStatement = connection.prepareStatement(createQuery);
+
+            sqlStatement.setString(1, username);
 
             statementResult = sqlStatement.executeQuery();
 

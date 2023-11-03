@@ -65,9 +65,7 @@ public class Chat extends Commands {
             return CHAT_RQST_ARGS_ERROR;
         }
 
-        Create.InsertRoom(null, false, false, null);
-        //Create.InsertUserInRoom();
-        //Needs database method to create new room between both users
+        Create.PrivateChat(this.client, this.username);
 
         this.receiver.add(this.username);
         this.selfMessage = "\nYou've accepted to chat with " + this.username + Colors.DEFAULT;
@@ -91,10 +89,7 @@ public class Chat extends Commands {
             return CHAT_ARGS_ERROR;
         }
 
-        //Create.InsertMessage(this.message, this.client, this.client + "-" + this.username);
         this.receiver.add(this.username);
-
-        this.receiver.add(username);
         this.selfMessage = Colors.PURPLE + "\n<private> " + Colors.CYAN_UNDERLINED + this.client + Colors.WHITE + ": " + this.message + Colors.DEFAULT;
         return Colors.PURPLE + "\n<private> " + Colors.BLUE + this.client + Colors.WHITE + ": " + this.message + Colors.DEFAULT;
     }

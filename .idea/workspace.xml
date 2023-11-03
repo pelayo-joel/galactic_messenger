@@ -6,11 +6,15 @@
   <component name="ChangeListManager">
     <list default="true" id="4190aee2-2537-4425-af85-159ac30cfe62" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/ServerConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/ServerConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/UserThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/UserThread.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/galactic_messenger.sql" beforeDir="false" afterPath="$PROJECT_DIR$/galactic_messenger.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/galactic_messenger_server.jar" beforeDir="false" afterPath="$PROJECT_DIR$/galactic_messenger_server.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/implementations/Chat.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/implementations/Chat.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/implementations/FileTransmission.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/implementations/FileTransmission.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/implementations/GroupChat.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/implementations/GroupChat.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/implementations/UserAuthentication.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/commands/implementations/UserAuthentication.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/database/crud/Create.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/database/crud/Create.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/database/crud/Read.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/database/crud/Read.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/database/crud/Update.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/galactic/server/modules/database/crud/Update.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -139,7 +143,9 @@
       <workItem from="1698392094060" duration="2208000" />
       <workItem from="1698655580905" duration="23687000" />
       <workItem from="1698742808305" duration="19785000" />
-      <workItem from="1698918128789" duration="9516000" />
+      <workItem from="1698918128789" duration="9838000" />
+      <workItem from="1699005149489" duration="8692000" />
+      <workItem from="1699019569990" duration="9305000" />
     </task>
     <servers />
   </component>

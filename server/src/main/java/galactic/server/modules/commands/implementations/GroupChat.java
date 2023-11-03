@@ -16,6 +16,7 @@ import galactic.server.modules.commands.miscellaneous.Encryption;
 import galactic.server.modules.database.crud.Create;
 import galactic.server.modules.database.crud.Delete;
 import galactic.server.modules.database.crud.Read;
+import galactic.server.modules.database.crud.Update;
 
 
 public class GroupChat extends Commands implements Encryption {
@@ -92,9 +93,10 @@ public class GroupChat extends Commands implements Encryption {
             return GRP_ARGS_ERROR;
         }
 
-        Create.InsertRoom(this.group, true, false, null);
-        Create.InsertUserInRoom(this.client, this.group);
+        Create.GroupChat(this.client, this.group, false, null);
 
+        this.receiver = Read.GroupUsers(this.group);
+        this.selfMessage = Colors.WHITE + "\nYou've successfully created the group'" + Colors.YELLOW + this.group + Colors.WHITE + "'" + Colors.DEFAULT;
         return Colors.WHITE + "\nNew group '" + Colors.YELLOW + this.group + Colors.WHITE + "' created" + Colors.DEFAULT;
     }
 
@@ -105,16 +107,16 @@ public class GroupChat extends Commands implements Encryption {
                 return SECURE_GRP_ARGS_ERROR;
             }
 
-            Create.InsertRoom(this.group, true, true, this.thirdArg);
-            Create.InsertUserInRoom(this.client, this.group);
-
             String encryptedPassword = Hashing() + Salting();
+            Create.GroupChat(this.client, this.group, true, encryptedPassword);
         }
         catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             System.out.println("Encryption error");
             e.printStackTrace();
         }
 
+        this.receiver = Read.GroupUsers(this.group);
+        this.selfMessage = Colors.WHITE + "\nYou've successfully created the secure group'" + Colors.YELLOW + this.group + Colors.WHITE + "'" + Colors.DEFAULT;
         return Colors.WHITE + "\nNew secure group '" + Colors.YELLOW + this.group + Colors.WHITE + "' created" + Colors.DEFAULT;
     }
 
@@ -124,7 +126,8 @@ public class GroupChat extends Commands implements Encryption {
             return GRP_ARGS_ERROR;
         }
 
-        Create.InsertUserInRoom(this.client, this.group);
+        Create.UserInGroup(this.group, this.client);
+        this.receiver = Read.GroupUsers(this.group);
 
         this.selfMessage = Colors.WHITE + "\nYou joined '" + Colors.YELLOW + this.group + Colors.WHITE + "'" + Colors.DEFAULT;
         return Colors.YELLOW + "\n[" + this.group + "] '" + Colors.BLUE + this.client + Colors.WHITE + "' joined the group" + Colors.DEFAULT;
@@ -137,15 +140,22 @@ public class GroupChat extends Commands implements Encryption {
                 return SECURE_GRP_ARGS_ERROR;
             }
 
-            String encryptedPassword = Hashing();
+            String encryptedPassword = Hashing(), storedPassword = Read.SecureGroupPassword(this.group);
             String salt = ":" + Salting();
+
+            if (!(encryptedPassword + salt).equals(storedPassword + salt)) {
+                this.selfMessage = "Group authentication failed";
+                return "";
+            }
+            Update.GroupPassword(this.group, storedPassword + salt);
         }
         catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             System.out.println("Encryption error");
             e.printStackTrace();
         }
 
-        Create.InsertUserInRoom(this.client, this.group);
+        Create.UserInGroup(this.group, this.client);
+        this.receiver = Read.GroupUsers(this.group);
 
         this.selfMessage = Colors.WHITE + "\nYou joined the secure group '" + Colors.YELLOW + this.group + Colors.WHITE + "'" + Colors.DEFAULT;
         return Colors.YELLOW + "\n[" + this.group + "] '" + Colors.BLUE + this.client + Colors.WHITE + "' joined this secure group" + Colors.DEFAULT;
@@ -158,7 +168,6 @@ public class GroupChat extends Commands implements Encryption {
                     "    Usage: <command> <group> <message>";
         }
 
-        //Create.InsertMessage(this.thirdArg, this.client, this.group);
         this.receiver = Read.GroupUsers(this.group);
 
         this.selfMessage = Colors.YELLOW + "\n[" + this.group + "] " + Colors.CYAN_UNDERLINED + this.client + Colors.WHITE + ": " + this.thirdArg + Colors.DEFAULT;
@@ -172,6 +181,7 @@ public class GroupChat extends Commands implements Encryption {
         }
 
         Delete.UserFromGroup(this.group, this.client);
+        this.receiver = Read.GroupUsers(this.group);
 
         return Colors.YELLOW + "\n[" + this.group + "] " + Colors.WHITE + "Someone left the group" + Colors.DEFAULT;
     }
