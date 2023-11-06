@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
@@ -50,6 +51,12 @@ public class UserAuthentication extends Commands implements Encryption {
     }
 
 
+    @Override
+    public Set<String> GetReceivingParty() {
+        return this.receiver;
+    }
+
+
 
     @Override
     public String Hashing() throws InvalidKeySpecException, NoSuchAlgorithmException {
@@ -78,7 +85,6 @@ public class UserAuthentication extends Commands implements Encryption {
     private String Register() {
         try {
             String encryptedPassword = Hashing() + ":" + Salting();
-            System.out.println(encryptedPassword.length());
 
             if (!Read.User(this.client, "id").isEmpty()) {
                 return "Invalid username: '" + this.client + "' already exists";

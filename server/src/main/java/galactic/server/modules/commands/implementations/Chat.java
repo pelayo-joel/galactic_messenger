@@ -3,6 +3,7 @@ package galactic.server.modules.commands.implementations;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import galactic.server.modules.commands.Commands;
 import galactic.server.modules.commands.miscellaneous.Colors;
@@ -25,8 +26,8 @@ public class Chat extends Commands {
     public Chat(List<String> clientInput, String clientName) {
         this.client = clientName;
         this.command = clientInput.get(0);
-        this.username = clientInput.get(1).isEmpty() ? null : clientInput.get(1);
-        this.message = clientInput.get(2).isEmpty() ? null : clientInput.get(2);
+        this.username = clientInput.size() == 2 ? clientInput.get(1) : null;
+        this.message = clientInput.size() == 3 ? clientInput.get(2) : null;
     }
 
 
@@ -47,11 +48,21 @@ public class Chat extends Commands {
     }
 
 
+    @Override
+    public Set<String> GetReceivingParty() {
+        return this.receiver;
+    }
+
 
 
     private String ChatRequest() {
         if (this.username == null) {
             return CHAT_RQST_ARGS_ERROR;
+        }
+
+        if (!Read.AllUsers().contains(this.username)) {
+            this.selfMessage = "'" + this.username + "' does not exist...";
+            return "";
         }
 
         this.receiver.add(this.username);
@@ -87,6 +98,11 @@ public class Chat extends Commands {
     private String Message() {
         if (this.username == null || this.message == null) {
             return CHAT_ARGS_ERROR;
+        }
+
+        if (Read.ChatId(this.client, this.username) == 0) {
+            this.selfMessage = "Send a '/private_chat' and wait for the username to accept before sending a message";
+            return "";
         }
 
         this.receiver.add(this.username);

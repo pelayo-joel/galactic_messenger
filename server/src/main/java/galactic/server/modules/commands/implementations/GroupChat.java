@@ -35,8 +35,9 @@ public class GroupChat extends Commands implements Encryption {
     public GroupChat(List<String> clientInput, String clientName) {
         this.client = clientName;
         this.command = clientInput.get(0);
-        this.group = clientInput.get(1).isEmpty() ? null : clientInput.get(1);
-        this.thirdArg = clientInput.get(2).isEmpty() ? null : clientInput.get(2);
+        this.group = clientInput.size() == 2 ? clientInput.get(1) : null;
+        this.thirdArg = clientInput.size() == 3 ? clientInput.get(2) : null;
+        System.out.println("Group init");
     }
 
 
@@ -54,6 +55,12 @@ public class GroupChat extends Commands implements Encryption {
             case "/exit_group" -> { return ExitGroup(); }
             default -> { return null; }
         }
+    }
+
+
+    @Override
+    public Set<String> GetReceivingParty() {
+        return this.receiver;
     }
 
 
@@ -93,10 +100,16 @@ public class GroupChat extends Commands implements Encryption {
             return GRP_ARGS_ERROR;
         }
 
+        if (Read.AllGroup().contains(this.group)) {
+            this.selfMessage = "Group name already taken...";
+            return "";
+        }
+        System.out.println("New group");
         Create.GroupChat(this.client, this.group, false, null);
 
-        this.receiver = Read.GroupUsers(this.group);
-        this.selfMessage = Colors.WHITE + "\nYou've successfully created the group'" + Colors.YELLOW + this.group + Colors.WHITE + "'" + Colors.DEFAULT;
+        this.receiver.addAll(Read.AllUsers());
+        this.receiver.remove(this.client);
+        this.selfMessage = Colors.WHITE + "\nYou've successfully created the group '" + Colors.YELLOW + this.group + Colors.WHITE + "'" + Colors.DEFAULT;
         return Colors.WHITE + "\nNew group '" + Colors.YELLOW + this.group + Colors.WHITE + "' created" + Colors.DEFAULT;
     }
 
@@ -107,6 +120,10 @@ public class GroupChat extends Commands implements Encryption {
                 return SECURE_GRP_ARGS_ERROR;
             }
 
+            if (Read.AllGroup().contains(this.group)) {
+                this.selfMessage = "Group name already taken...";
+                return "";
+            }
             String encryptedPassword = Hashing() + Salting();
             Create.GroupChat(this.client, this.group, true, encryptedPassword);
         }
@@ -115,8 +132,9 @@ public class GroupChat extends Commands implements Encryption {
             e.printStackTrace();
         }
 
-        this.receiver = Read.GroupUsers(this.group);
-        this.selfMessage = Colors.WHITE + "\nYou've successfully created the secure group'" + Colors.YELLOW + this.group + Colors.WHITE + "'" + Colors.DEFAULT;
+        this.receiver.addAll(Read.AllUsers());
+        this.receiver.remove(this.client);
+        this.selfMessage = Colors.WHITE + "\nYou've successfully created the secure group '" + Colors.YELLOW + this.group + Colors.WHITE + "'" + Colors.DEFAULT;
         return Colors.WHITE + "\nNew secure group '" + Colors.YELLOW + this.group + Colors.WHITE + "' created" + Colors.DEFAULT;
     }
 
@@ -126,8 +144,13 @@ public class GroupChat extends Commands implements Encryption {
             return GRP_ARGS_ERROR;
         }
 
+        if (!Read.AllGroup().contains(this.group)) {
+            this.selfMessage =  "'" + this.group + "' does not exist...";
+            return "";
+        }
         Create.UserInGroup(this.group, this.client);
         this.receiver = Read.GroupUsers(this.group);
+        this.receiver.remove(this.client);
 
         this.selfMessage = Colors.WHITE + "\nYou joined '" + Colors.YELLOW + this.group + Colors.WHITE + "'" + Colors.DEFAULT;
         return Colors.YELLOW + "\n[" + this.group + "] '" + Colors.BLUE + this.client + Colors.WHITE + "' joined the group" + Colors.DEFAULT;
@@ -140,6 +163,10 @@ public class GroupChat extends Commands implements Encryption {
                 return SECURE_GRP_ARGS_ERROR;
             }
 
+            if (!Read.AllGroup().contains(this.group)) {
+                this.selfMessage =  "'" + this.group + "' does not exist...";
+                return "";
+            }
             String encryptedPassword = Hashing(), storedPassword = Read.SecureGroupPassword(this.group);
             String salt = ":" + Salting();
 
@@ -155,7 +182,7 @@ public class GroupChat extends Commands implements Encryption {
         }
 
         Create.UserInGroup(this.group, this.client);
-        this.receiver = Read.GroupUsers(this.group);
+        this.receiver.addAll(Read.GroupUsers(this.group));
 
         this.selfMessage = Colors.WHITE + "\nYou joined the secure group '" + Colors.YELLOW + this.group + Colors.WHITE + "'" + Colors.DEFAULT;
         return Colors.YELLOW + "\n[" + this.group + "] '" + Colors.BLUE + this.client + Colors.WHITE + "' joined this secure group" + Colors.DEFAULT;
@@ -168,7 +195,13 @@ public class GroupChat extends Commands implements Encryption {
                     "    Usage: <command> <group> <message>";
         }
 
-        this.receiver = Read.GroupUsers(this.group);
+        if (!Read.AllGroup().contains(this.group)) {
+            this.selfMessage =  "'" + this.group + "' does not exist...";
+            return "";
+        }
+
+        this.receiver.addAll(Read.GroupUsers(this.group));
+        this.receiver.remove(this.client);
 
         this.selfMessage = Colors.YELLOW + "\n[" + this.group + "] " + Colors.CYAN_UNDERLINED + this.client + Colors.WHITE + ": " + this.thirdArg + Colors.DEFAULT;
         return Colors.YELLOW + "\n[" + this.group + "] " + Colors.BLUE + this.client + Colors.WHITE + ": " + this.thirdArg + Colors.DEFAULT;
@@ -180,8 +213,12 @@ public class GroupChat extends Commands implements Encryption {
             return GRP_ARGS_ERROR;
         }
 
+        if (!Read.AllGroup().contains(this.group)) {
+            this.selfMessage =  "'" + this.group + "' does not exist...";
+            return "";
+        }
         Delete.UserFromGroup(this.group, this.client);
-        this.receiver = Read.GroupUsers(this.group);
+        this.receiver.addAll(Read.GroupUsers(this.group));
 
         return Colors.YELLOW + "\n[" + this.group + "] " + Colors.WHITE + "Someone left the group" + Colors.DEFAULT;
     }

@@ -103,11 +103,11 @@ public class Create extends DbConnection {
 
     private static void InsertUserInRoom(int roomId, String username) {
         try{
-            String createQuery = "INSERT INTO room_participants (idRoom, idUser) VALUES (?, ?);";
-            sqlStatement = connection.prepareStatement(createQuery);
-
             String userFieldValue = Read.User(username, "id");
             int userId = Integer.parseInt(userFieldValue);
+
+            String createQuery = "INSERT INTO room_participants (idRoom, idUser) VALUES (?, ?);";
+            sqlStatement = connection.prepareStatement(createQuery);
 
             sqlStatement.setInt(1, roomId);
             sqlStatement.setInt(2, userId);

@@ -23,8 +23,8 @@ public class FileTransmission extends Commands {
     public FileTransmission(List<String> clientInput, String clientName) {
         this.client = clientName;
         this.command = clientInput.get(0);
-        this.canal = clientInput.get(1).isEmpty() ? null : clientInput.get(1);
-        this.fileName = clientInput.get(2).isEmpty() ? null : clientInput.get(2);
+        this.canal = clientInput.size() == 2 ? clientInput.get(1) : null;
+        this.fileName = clientInput.size() == 3 ? clientInput.get(2) : null;
 
         if (this.fileName != null && this.fileName.contains("/")) {
             this.fileName = this.fileName.substring(this.fileName.lastIndexOf("/") + 1);
@@ -45,6 +45,13 @@ public class FileTransmission extends Commands {
             default -> { return null; }
         }
     }
+
+
+    @Override
+    public Set<String> GetReceivingParty() {
+        return this.receiver;
+    }
+
 
 
     public DatagramPacket GetFile() {
@@ -80,6 +87,16 @@ public class FileTransmission extends Commands {
         if (this.canal == null || this.file == null) {
             return "\nInvalid usage: missing group/username or file path or both\n" +
                     "    Usage: <command> <group/username> <file path>";
+        }
+
+        if(Read.AllGroupNames().contains(this.canal)) {
+            this.receiver.addAll(Read.GroupUsers(this.canal));
+        }
+        else if (Read.AllUsernames().contains(this.canal)) {
+            this.receiver.add(this.canal);
+        }
+        else {
+            return "Username or group name invalid";
         }
 
         return "'" + this.fileName + "' is available for you on the server";
@@ -118,6 +135,16 @@ public class FileTransmission extends Commands {
         if (this.canal == null || this.file == null) {
             return "\nInvalid usage: missing group/username or file path or both\n" +
                     "    Usage: <command> <group/username> <file name>";
+        }
+
+        if(Read.AllGroupNames().contains(this.canal)) {
+            this.receiver.addAll(Read.GroupUsers(this.canal));
+        }
+        else if (Read.AllUsernames().contains(this.canal)) {
+            this.receiver.add(this.canal);
+        }
+        else {
+            return "Username or group name invalid";
         }
 
         return "'" + this.fileName + "' has been successfully downloaded" ;

@@ -248,8 +248,8 @@ public class Read extends DbConnection {
 
         try{
             String createQuery = "SELECT username FROM users " +
-                    "INNER JOIN room_participants ON users.id = room_participants.idUser" +
-                    "INNER JOIN room ON room_participants.idRoom = room.id" +
+                    "INNER JOIN room_participants ON users.id = room_participants.idUser " +
+                    "INNER JOIN room ON room_participants.idRoom = room.id " +
                     "WHERE room.name = ?;";
             sqlStatement = connection.prepareStatement(createQuery);
 
@@ -266,5 +266,71 @@ public class Read extends DbConnection {
             e.printStackTrace();
         }
         return groupUsers;
+    }
+
+
+
+
+
+    public static Set<String> AllUsers() {
+        Set<String> allUsers = new HashSet<>();
+
+        try{
+            String createQuery = "SELECT username FROM users;";
+            sqlStatement = connection.prepareStatement(createQuery);
+
+            statementResult = sqlStatement.executeQuery();
+
+            while(statementResult.next()) {
+                allUsers.add(statementResult.getString(1));
+            }
+        }
+        catch (SQLException e) {
+            System.out.println("Error in database: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return allUsers;
+    }
+
+
+    public static Set<String> AllGroup() {
+        Set<String> allGroup = new HashSet<>();
+
+        try{
+            String createQuery = "SELECT name FROM room;";
+            sqlStatement = connection.prepareStatement(createQuery);
+
+            statementResult = sqlStatement.executeQuery();
+
+            while(statementResult.next()) {
+                allGroup.add(statementResult.getString(1));
+            }
+        }
+        catch (SQLException e) {
+            System.out.println("Error in database: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return allGroup;
+    }
+
+
+    public static Set<String> AllPrivateChat() {
+        Set<String> allChat = new HashSet<>();
+
+        try{
+            String createQuery = "SELECT id FROM room WHERE type = 0;";
+            sqlStatement = connection.prepareStatement(createQuery);
+
+            statementResult = sqlStatement.executeQuery();
+
+            while(statementResult.next()) {
+                allChat.add(statementResult.getString(1));
+            }
+        }
+        catch (SQLException e) {
+            System.out.println("Error in database: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return allChat;
     }
 }

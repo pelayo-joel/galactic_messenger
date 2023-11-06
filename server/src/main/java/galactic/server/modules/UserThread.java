@@ -91,7 +91,7 @@ public class UserThread extends Thread {
         this.clientCommand = clientInput.get(0);
 
         if (!this.connected) {
-            Login(clientInput);
+            ClientLogin(clientInput);
             return;
         }
 
@@ -146,6 +146,7 @@ public class UserThread extends Thread {
                         "For group command: '/create_group', '/join_group', '/msg_group', '/exit_group', '/create_secure_group', '/join_secure_group'\n" +
                         "For files command: '/upload', '/list_files', '/download'\n" +
                         "To print online users: '/online_users'\n" +
+                        "To print all commands and their description/usage: '/help'\n" +
                         "To quit and log out from the program: '/disconnect', '/quit'");
         }
     }
@@ -168,29 +169,34 @@ public class UserThread extends Thread {
     }
 
 
-    private void Login(List<String> clientInput) {
+    private void ClientLogin(List<String> clientInput) {
         if (this.clientCommand.equals("/login") || this.clientCommand.equals("/register")) {
             Commands clientConnection = new UserAuthentication(clientInput);
             this.clientName = clientConnection.getClientName();
             this.serverMessage = clientConnection.CommandHandler();
 
-            if (!this.serverMessage.startsWith("Invalid") || !this.serverMessage.equals("Authentication failed")) {
+            if (this.serverMessage.startsWith("Invalid") || this.serverMessage.equals("Authentication failed")) {
+                this.SendMessage(this.serverMessage);
+            }
+            else {
                 ServerConnection.addUserName(this.clientName);
                 this.connected = true;
+                this.SendMessage(this.serverMessage + Colors.BLUE + "\n" +
+                        "  ________    _____  .____       _____  ____________________.____________         _____  ___________ _________ ____________________ _______    _____________________________ \n" +
+                        " /  _____/   /  _  \\ |    |     /  _  \\ \\_   ___ \\__    ___/|   \\_   ___ \\       /     \\ \\_   _____//   _____//   _____/\\_   _____/ \\      \\  /  _____/\\_   _____/\\______   \\\n" +
+                        "/   \\  ___  /  /_\\  \\|    |    /  /_\\  \\/    \\  \\/ |    |   |   /    \\  \\/      /  \\ /  \\ |    __)_ \\_____  \\ \\_____  \\  |    __)_  /   |   \\/   \\  ___ |    __)_  |       _/\n" +
+                        "\\    \\_\\  \\/    |    \\    |___/    |    \\     \\____|    |   |   \\     \\____    /    Y    \\|        \\/        \\/        \\ |        \\/    |    \\    \\_\\  \\|        \\ |    |   \\\n" +
+                        " \\______  /\\____|__  /_______ \\____|__  /\\______  /|____|   |___|\\______  /____\\____|__  /_______  /_______  /_______  //_______  /\\____|__  /\\______  /_______  / |____|_  /\n" +
+                        "        \\/         \\/        \\/       \\/        \\/                      \\/_____/       \\/        \\/        \\/        \\/         \\/         \\/        \\/        \\/         \\/ \n\n" +
+                        Colors.WHITE +
+                        "For 1-to-1 messages: '/private_chat', '/accept', '/decline', '/msg', '/exit_private_chat'\n" +
+                        "For group command: '/create_group', '/join_group', '/msg_group', '/exit_group', '/create_secure_group', '/join_secure_group'\n" +
+                        "For files command: '/upload', '/list_files', '/download'\n" +
+                        "To print online users: '/online_users'\n" +
+                        "To print all commands and their description/usage: '/help'\n" +
+                        "To quit and log out from the program: '/disconnect', '/quit'\n" + Colors.DEFAULT);
+
             }
-            this.SendMessage(this.serverMessage + Colors.BLUE + "\n" +
-                    "  ________    _____  .____       _____  ____________________.____________         _____  ___________ _________ ____________________ _______    _____________________________ \n" +
-                    " /  _____/   /  _  \\ |    |     /  _  \\ \\_   ___ \\__    ___/|   \\_   ___ \\       /     \\ \\_   _____//   _____//   _____/\\_   _____/ \\      \\  /  _____/\\_   _____/\\______   \\\n" +
-                    "/   \\  ___  /  /_\\  \\|    |    /  /_\\  \\/    \\  \\/ |    |   |   /    \\  \\/      /  \\ /  \\ |    __)_ \\_____  \\ \\_____  \\  |    __)_  /   |   \\/   \\  ___ |    __)_  |       _/\n" +
-                    "\\    \\_\\  \\/    |    \\    |___/    |    \\     \\____|    |   |   \\     \\____    /    Y    \\|        \\/        \\/        \\ |        \\/    |    \\    \\_\\  \\|        \\ |    |   \\\n" +
-                    " \\______  /\\____|__  /_______ \\____|__  /\\______  /|____|   |___|\\______  /____\\____|__  /_______  /_______  /_______  //_______  /\\____|__  /\\______  /_______  / |____|_  /\n" +
-                    "        \\/         \\/        \\/       \\/        \\/                      \\/_____/       \\/        \\/        \\/        \\/         \\/         \\/        \\/        \\/         \\/ \n\n" +
-                    Colors.WHITE +
-                    "For 1-to-1 messages: '/private_chat', '/accept', '/decline', '/msg', '/exit_private_chat'\n" +
-                    "For group command: '/create_group', '/join_group', '/msg_group', '/exit_group', '/create_secure_group', '/join_secure_group'\n" +
-                    "For files command: '/upload', '/list_files', '/download'\n" +
-                    "To print online users: '/online_users'\n" +
-                    "To quit and log out from the program: '/disconnect', '/quit'\n" + Colors.DEFAULT);
         }
 
         else {
