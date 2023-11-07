@@ -24,7 +24,7 @@ public class FileTransmission extends Commands {
     public FileTransmission(List<String> clientInput, String clientName) {
         this.client = clientName;
         this.command = clientInput.get(0);
-        this.canal = clientInput.size() == 2 ? clientInput.get(1) : null;
+        this.canal = clientInput.size() >= 2 ? clientInput.get(1) : null;
         this.fileName = clientInput.size() == 3 ? clientInput.get(2) : null;
 
         if (this.fileName != null && this.fileName.contains("/")) {
@@ -45,6 +45,12 @@ public class FileTransmission extends Commands {
             case "/download" -> { return FileDownload(); }
             default -> { return null; }
         }
+    }
+
+
+    @Override
+    public String ServerResponse() {
+        return this.selfMessage;
     }
 
 

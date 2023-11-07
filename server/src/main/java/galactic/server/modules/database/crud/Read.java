@@ -82,7 +82,7 @@ public class Read extends DbConnection {
         List<String> userList = new ArrayList<>();
 
         try{
-            String createQuery = "SELECT username FROM user;";
+            String createQuery = "SELECT username FROM users;";
             sqlStatement = connection.prepareStatement(createQuery);
 
             statementResult = sqlStatement.executeQuery();
@@ -147,10 +147,10 @@ public class Read extends DbConnection {
     public static int ChatId(String clientName, String username) {
         int roomId = 0;
         try{
-            String createQuery = "SELECT id FROM room " +
+            String createQuery = "SELECT room.id FROM room " +
                     "INNER JOIN room_participants ON room_participants.idRoom = room.id " +
-                    "INNER JOIN user ON user.id = room_particpants.idUser " +
-                    "WHERE room.type = 0 AND user.username = ? OR user.username = ?;";
+                    "INNER JOIN users ON users.id = room_participants.idUser " +
+                    "WHERE room.type = 0 AND users.username = ? OR users.username = ?;";
             sqlStatement = connection.prepareStatement(createQuery);
 
             sqlStatement.setString(1, clientName);
@@ -159,6 +159,7 @@ public class Read extends DbConnection {
             statementResult = sqlStatement.executeQuery();
 
             while(statementResult.next()) {
+                System.out.println(roomId);
                 roomId = statementResult.getInt(1);
             }
         }
@@ -223,8 +224,8 @@ public class Read extends DbConnection {
             String createQuery = "SELECT fileName FROM files " +
                     "INNER JOIN room ON room.id = files.idRoom " +
                     "INNER JOIN room_participants ON room_participants.idRoom = room.id " +
-                    "INNER JOIN user ON user.id = room_participants.idUser " +
-                    "WHERE user.username = ? AND room.type = 0;";
+                    "INNER JOIN users ON users.id = room_participants.idUser " +
+                    "WHERE users.username = ? AND room.type = 0;";
             sqlStatement = connection.prepareStatement(createQuery);
 
             sqlStatement.setString(1, username);

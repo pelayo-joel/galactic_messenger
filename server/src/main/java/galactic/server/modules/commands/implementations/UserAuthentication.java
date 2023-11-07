@@ -52,6 +52,12 @@ public class UserAuthentication extends Commands implements Encryption {
 
 
     @Override
+    public String ServerResponse() {
+        return this.selfMessage;
+    }
+
+
+    @Override
     public Set<String> GetReceivingParty() {
         return this.receiver;
     }

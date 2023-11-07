@@ -13,12 +13,12 @@ public abstract class Commands {
 
     public abstract String CommandHandler();
 
+    public abstract String ServerResponse();
+
     public abstract Set<String> GetReceivingParty();
 
     protected abstract String InvalidArgumentsErrors();
 
 
     public String getClientName() { return client; }
-
-    public String ServerResponse() { return selfMessage; }
 }

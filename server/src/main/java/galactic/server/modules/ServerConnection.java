@@ -38,13 +38,13 @@ public class ServerConnection {
             DbConnection.GetInstance(databasePort);
 
             InetAddress localHost = InetAddress.getLocalHost();
+            DatagramSocket fileSocket = new DatagramSocket(serverPort);
             System.out.println("Server available at " + localHost.getHostAddress() + ":" + serverPort);
 
             while (true) {
                 Socket messageSocket = serverSocket.accept();
-                DatagramSocket fileSocket = new DatagramSocket(serverPort, messageSocket.getInetAddress());
 
-                System.out.println("New user connected");
+                System.out.println("New user connected, ip: " + messageSocket.getInetAddress());
 
                 UserThread newUser = new UserThread(messageSocket, fileSocket);
                 userThreads.add(newUser);

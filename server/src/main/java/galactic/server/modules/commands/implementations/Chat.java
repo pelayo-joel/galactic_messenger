@@ -26,7 +26,7 @@ public class Chat extends Commands {
     public Chat(List<String> clientInput, String clientName) {
         this.client = clientName;
         this.command = clientInput.get(0);
-        this.username = clientInput.size() == 2 ? clientInput.get(1) : null;
+        this.username = clientInput.size() >= 2 ? clientInput.get(1) : null;
         this.message = clientInput.size() == 3 ? clientInput.get(2) : null;
     }
 
@@ -45,6 +45,12 @@ public class Chat extends Commands {
             case "/exit_private_chat" -> { return "exit"; }
             default -> { return null; }
         }
+    }
+
+
+    @Override
+    public String ServerResponse() {
+        return this.selfMessage;
     }
 
 
@@ -96,8 +102,10 @@ public class Chat extends Commands {
 
 
     private String Message() {
+        System.out.println("username: " + this.username + ", message: " + this.message);
         if (this.username == null || this.message == null) {
-            return CHAT_ARGS_ERROR;
+            this.selfMessage = CHAT_ARGS_ERROR;
+            return "";
         }
 
         if (Read.ChatId(this.client, this.username) == 0) {

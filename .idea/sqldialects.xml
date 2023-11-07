@@ -3,5 +3,6 @@
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/galactic_messenger.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/server/src/main/java/galactic/server/modules/database/crud/Create.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/server/src/main/java/galactic/server/modules/database/crud/Read.java" dialect="MySQL" />
   </component>
 </project>

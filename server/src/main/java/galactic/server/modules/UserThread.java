@@ -96,6 +96,7 @@ public class UserThread extends Thread {
         }
 
         Commands clientRequest = CommandParser(clientInput);
+
         if (clientRequest != null) {
             this.serverMessage = clientRequest.CommandHandler();
 
@@ -118,6 +119,7 @@ public class UserThread extends Thread {
                 ServerConnection.messageBroadcast(this.serverMessage, clientRequest.GetReceivingParty());
             }
             else {
+                System.out.println("Command executed?");
                 this.SendMessage(clientRequest.ServerResponse());
                 ServerConnection.messageBroadcast(this.serverMessage, clientRequest.GetReceivingParty());
             }

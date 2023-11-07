@@ -35,7 +35,7 @@ public class GroupChat extends Commands implements Encryption {
     public GroupChat(List<String> clientInput, String clientName) {
         this.client = clientName;
         this.command = clientInput.get(0);
-        this.group = clientInput.size() == 2 ? clientInput.get(1) : null;
+        this.group = clientInput.size() >= 2 ? clientInput.get(1) : null;
         this.thirdArg = clientInput.size() == 3 ? clientInput.get(2) : null;
     }
 
@@ -54,6 +54,12 @@ public class GroupChat extends Commands implements Encryption {
             case "/exit_group" -> { return ExitGroup(); }
             default -> { return null; }
         }
+    }
+
+
+    @Override
+    public String ServerResponse() {
+        return this.selfMessage;
     }
 
 
@@ -125,6 +131,7 @@ public class GroupChat extends Commands implements Encryption {
             }
             String encryptedPassword = Hashing() + Salting();
             Create.GroupChat(this.client, this.group, true, encryptedPassword);
+            System.out.println("test");
         }
         catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             System.out.println("Encryption error");
@@ -148,7 +155,7 @@ public class GroupChat extends Commands implements Encryption {
             return "";
         }
 
-        if(Read.GroupUsers(this.group).contains(this.client)) {
+        if (Read.GroupUsers(this.group).contains(this.client)) {
             this.selfMessage =  "You're already in '" + this.group + "'";
             return "";
         }
