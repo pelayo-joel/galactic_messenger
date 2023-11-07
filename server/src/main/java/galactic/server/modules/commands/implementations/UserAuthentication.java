@@ -118,4 +118,10 @@ public class UserAuthentication extends Commands implements Encryption {
         }
         return Colors.GREEN + "\nWelcome back '" + this.client + "'" + Colors.DEFAULT;
     }
+
+
+    @Override
+    protected String InvalidArgumentsErrors() {
+        return "";
+    }
 }

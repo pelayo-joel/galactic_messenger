@@ -109,4 +109,10 @@ public class Chat extends Commands {
         this.selfMessage = Colors.PURPLE + "\n<private> " + Colors.CYAN_UNDERLINED + this.client + Colors.WHITE + ": " + this.message + Colors.DEFAULT;
         return Colors.PURPLE + "\n<private> " + Colors.BLUE + this.client + Colors.WHITE + ": " + this.message + Colors.DEFAULT;
     }
+
+
+    @Override
+    protected String InvalidArgumentsErrors() {
+        return "";
+    }
 }

@@ -37,7 +37,6 @@ public class GroupChat extends Commands implements Encryption {
         this.command = clientInput.get(0);
         this.group = clientInput.size() == 2 ? clientInput.get(1) : null;
         this.thirdArg = clientInput.size() == 3 ? clientInput.get(2) : null;
-        System.out.println("Group init");
     }
 
 
@@ -100,12 +99,12 @@ public class GroupChat extends Commands implements Encryption {
             return GRP_ARGS_ERROR;
         }
 
-        if (Read.AllGroup().contains(this.group)) {
+        if (Read.AllGroupNames().contains(this.group)) {
             this.selfMessage = "Group name already taken...";
             return "";
         }
-        System.out.println("New group");
         Create.GroupChat(this.client, this.group, false, null);
+        System.out.println("New group named '" + this.group + "' in database");
 
         this.receiver.addAll(Read.AllUsers());
         this.receiver.remove(this.client);
@@ -120,7 +119,7 @@ public class GroupChat extends Commands implements Encryption {
                 return SECURE_GRP_ARGS_ERROR;
             }
 
-            if (Read.AllGroup().contains(this.group)) {
+            if (Read.AllGroupNames().contains(this.group)) {
                 this.selfMessage = "Group name already taken...";
                 return "";
             }
@@ -144,8 +143,13 @@ public class GroupChat extends Commands implements Encryption {
             return GRP_ARGS_ERROR;
         }
 
-        if (!Read.AllGroup().contains(this.group)) {
+        if (!Read.AllGroupNames().contains(this.group)) {
             this.selfMessage =  "'" + this.group + "' does not exist...";
+            return "";
+        }
+
+        if(Read.GroupUsers(this.group).contains(this.client)) {
+            this.selfMessage =  "You're already in '" + this.group + "'";
             return "";
         }
         Create.UserInGroup(this.group, this.client);
@@ -163,7 +167,7 @@ public class GroupChat extends Commands implements Encryption {
                 return SECURE_GRP_ARGS_ERROR;
             }
 
-            if (!Read.AllGroup().contains(this.group)) {
+            if (!Read.AllGroupNames().contains(this.group)) {
                 this.selfMessage =  "'" + this.group + "' does not exist...";
                 return "";
             }
@@ -181,6 +185,10 @@ public class GroupChat extends Commands implements Encryption {
             e.printStackTrace();
         }
 
+        if(Read.GroupUsers(this.group).contains(this.client)) {
+            this.selfMessage =  "You're already in '" + this.group + "'";
+            return "";
+        }
         Create.UserInGroup(this.group, this.client);
         this.receiver.addAll(Read.GroupUsers(this.group));
 
@@ -195,11 +203,7 @@ public class GroupChat extends Commands implements Encryption {
                     "    Usage: <command> <group> <message>";
         }
 
-        if (!Read.AllGroup().contains(this.group)) {
-            this.selfMessage =  "'" + this.group + "' does not exist...";
-            return "";
-        }
-
+        if (ArgumentsValidation()) return "";
         this.receiver.addAll(Read.GroupUsers(this.group));
         this.receiver.remove(this.client);
 
@@ -213,13 +217,30 @@ public class GroupChat extends Commands implements Encryption {
             return GRP_ARGS_ERROR;
         }
 
-        if (!Read.AllGroup().contains(this.group)) {
-            this.selfMessage =  "'" + this.group + "' does not exist...";
-            return "";
-        }
+        if (ArgumentsValidation()) return "";
         Delete.UserFromGroup(this.group, this.client);
         this.receiver.addAll(Read.GroupUsers(this.group));
 
         return Colors.YELLOW + "\n[" + this.group + "] " + Colors.WHITE + "Someone left the group" + Colors.DEFAULT;
+    }
+
+
+    private boolean ArgumentsValidation() {
+        if (!Read.AllGroupNames().contains(this.group)) {
+            this.selfMessage =  "'" + this.group + "' does not exist...";
+            return true;
+        }
+
+        if(!Read.GroupUsers(this.group).contains(this.client)) {
+            this.selfMessage =  "You're not in '" + this.group + "'";
+            return true;
+        }
+        return false;
+    }
+
+
+    @Override
+    protected String InvalidArgumentsErrors() {
+        return "";
     }
 }

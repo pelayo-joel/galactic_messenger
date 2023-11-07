@@ -15,6 +15,8 @@ public abstract class Commands {
 
     public abstract Set<String> GetReceivingParty();
 
+    protected abstract String InvalidArgumentsErrors();
+
 
     public String getClientName() { return client; }
 

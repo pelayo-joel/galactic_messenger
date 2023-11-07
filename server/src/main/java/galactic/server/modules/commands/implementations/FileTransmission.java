@@ -2,10 +2,7 @@ package galactic.server.modules.commands.implementations;
 
 
 import java.net.DatagramPacket;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import galactic.server.modules.commands.Commands;
 import galactic.server.modules.database.crud.Create;
@@ -15,6 +12,10 @@ import galactic.server.modules.database.crud.Read;
 public class FileTransmission extends Commands {
 
     private DatagramPacket file;
+
+    private final String CANAL_ARGS_ERROR = "Username or group name invalid or does not exist",
+            FILE_ARGS_ERROR = "\nInvalid usage: missing group/username or file path or both\n" +
+                    "    Usage: <command> <group/username> <file path>";
 
     private String canal, fileName;
 
@@ -84,19 +85,8 @@ public class FileTransmission extends Commands {
 
 
     private String FileUpload() {
-        if (this.canal == null || this.file == null) {
-            return "\nInvalid usage: missing group/username or file path or both\n" +
-                    "    Usage: <command> <group/username> <file path>";
-        }
-
-        if(Read.AllGroupNames().contains(this.canal)) {
-            this.receiver.addAll(Read.GroupUsers(this.canal));
-        }
-        else if (Read.AllUsernames().contains(this.canal)) {
-            this.receiver.add(this.canal);
-        }
-        else {
-            return "Username or group name invalid";
+        if (!InvalidArgumentsErrors().isEmpty()) {
+            return InvalidArgumentsErrors();
         }
 
         return "'" + this.fileName + "' is available for you on the server";
@@ -120,7 +110,7 @@ public class FileTransmission extends Commands {
             fileList = Read.ChatFiles(this.canal);
         }
         else {
-            return "Username or group name invalid";
+            return CANAL_ARGS_ERROR;
         }
 
         for (String file : fileList) {
@@ -132,9 +122,17 @@ public class FileTransmission extends Commands {
 
 
     private String FileDownload() {
+        if (!InvalidArgumentsErrors().isEmpty()) {
+            return InvalidArgumentsErrors();
+        }
+
+        return "'" + this.fileName + "' has been successfully downloaded" ;
+    }
+
+
+    protected String InvalidArgumentsErrors() {
         if (this.canal == null || this.file == null) {
-            return "\nInvalid usage: missing group/username or file path or both\n" +
-                    "    Usage: <command> <group/username> <file name>";
+            return FILE_ARGS_ERROR;
         }
 
         if(Read.AllGroupNames().contains(this.canal)) {
@@ -144,9 +142,9 @@ public class FileTransmission extends Commands {
             this.receiver.add(this.canal);
         }
         else {
-            return "Username or group name invalid";
+            return CANAL_ARGS_ERROR;
         }
 
-        return "'" + this.fileName + "' has been successfully downloaded" ;
+        return "";
     }
 }
