@@ -1,8 +1,12 @@
 package galactic.client;
 
+import galactic.client.modules.miscellaneous.Colors;
+
+import java.awt.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.*;
+import java.util.List;
 
 public class Client {
     private static Socket socket;
@@ -98,11 +102,41 @@ public class Client {
             System.out.print("Enter a message: ");
             String message = scanner.nextLine();
             client.sendMessage(message);
-            if(message.equals("/disconnect")) {
+            if(message.equals("/disconnect") || message.equals("/quit")) {
                 System.out.println("Disconnecting...");
                 client.close();
                 break;
             }
+            if (message.equals("/help")) {
+                System.out.println(Colors.RED + "For 1-to-1 messages:\n" +
+                        Colors.BLUE + "\n/private_chat [target user] :" + Colors.DEFAULT + " Cette commande permet de demarrer une conversation privee avec un autre utilisateur en specifiant leur nom.\n" +
+                        Colors.BLUE + "\n/accept [target user] :" + Colors.DEFAULT + " Utilise pour accepter une invitation à une discussion privee de la part d'un utilisateur specifie.\n" +
+                        Colors.BLUE + "\n/decline [target user] :" + Colors.DEFAULT + " Cette commande permet de refuser une invitation à une discussion privee de la part d'un utilisateur specifie.\n" +
+                        Colors.BLUE + "\n/msg [message] :" + Colors.DEFAULT + " Utilise pour envoyer un message dans une conversation privee en cours.\n" +
+                        Colors.BLUE + "\n/exit_private_chat :" + Colors.DEFAULT + " Cette commande permet de quitter une discussion privee actuelle.\n");
+
+                System.out.println(Colors.RED + "For group command:\n" +
+                        Colors.BLUE + "\n/create_group [name] :" + Colors.DEFAULT + "  Vous permet de creer un groupe de discussion en specifiant un nom pour le groupe.\n" +
+                        Colors.BLUE + "\n/join_group [name] :" + Colors.DEFAULT + " Utilise pour rejoindre un groupe de discussion existant en specifiant son nom.\n" +
+                        Colors.BLUE + "\n/msg_group :" + Colors.DEFAULT + " Cette commande permet d'envoyer un message dans un groupe de discussion en cours.\n" +
+                        Colors.BLUE + "\n/exit_group :" + Colors.DEFAULT + " Utilise pour quitter le groupe de discussion actuel.\n" +
+                        Colors.BLUE + "\n/create_secure_group [name] [password] :" + Colors.DEFAULT + " Vous permet de creer un groupe de discussion securise en specifiant un nom et un mot de passe.\n" +
+                        Colors.BLUE + "\n/join_secure_group [name] :" + Colors.DEFAULT + " Cette commande permet de rejoindre un groupe de discussion securise en specifiant son nom.\n");
+
+                System.out.println(Colors.RED + "For files command:\n" +
+                        Colors.BLUE + "\n/upload [user/group] [filename] :" + Colors.DEFAULT + " Utilise pour telecharger un fichier vers un utilisateur ou un groupe specifie.\n" +
+                        Colors.BLUE + "\n/list_files :" + Colors.DEFAULT + " Cette commande affiche la liste des fichiers disponibles dans la messagerie.\n" +
+                        Colors.BLUE + "\n/download [user/group] [filename] :" + Colors.DEFAULT + " Vous permet de telecharger un fichier depuis un utilisateur ou un groupe specifie.\n");
+
+                System.out.println(Colors.RED + "To print online users:\n" +
+                        Colors.BLUE + "\n/online_users :" + Colors.DEFAULT + " Affiche la liste des utilisateurs en ligne.\n");
+
+                System.out.println(Colors.RED + "To quit and log out from the program:\n" +
+                        Colors.BLUE + "\n/disconnect :" + Colors.DEFAULT + " Utilise pour quitter completement le programme et se deconnecter.\n" +
+                        Colors.BLUE + "\n/quit :" + Colors.DEFAULT + " Utilise pour quitter completement le programme et se deconnecter." + Colors.DEFAULT);
+            }
+
+
         }
     }
 }
