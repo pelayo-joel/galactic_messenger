@@ -1,5 +1,9 @@
 package galactic.server.modules.commands.miscellaneous;
 
+
+/**
+ * Sets of colors for prettier CLI app :D
+ */
 public enum Colors {
 
     DEFAULT("\033[0m"),

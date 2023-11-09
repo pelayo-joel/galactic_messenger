@@ -20,12 +20,19 @@ import galactic.server.modules.database.crud.Read;
 import galactic.server.modules.database.crud.Update;
 
 
+/**
+ * Inherits 'Commands', handles user authentication commands and creates a corresponding response from the server
+ */
 public class UserAuthentication extends Commands implements Encryption {
 
     private String password;
 
 
-
+    /**
+     * Gets each string from the list to parse it
+     *
+     * @param clientInput user Input
+     */
     public UserAuthentication(List<String> clientInput) {
         this.command = clientInput.get(0);
         this.client = clientInput.get(1);
@@ -82,7 +89,10 @@ public class UserAuthentication extends Commands implements Encryption {
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
         byte[] salt = new byte[32];
         sr.nextBytes(salt);
-        return Arrays.toString(salt);
+
+        StringBuilder hexaString = new StringBuilder();
+        for (byte b : salt) { hexaString.append(String.format("%02X", b)); }
+        return hexaString.toString();
     }
 
 
@@ -92,6 +102,7 @@ public class UserAuthentication extends Commands implements Encryption {
         try {
             String encryptedPassword = Hashing() + ":" + Salting();
 
+            //Checks if the user already exists or not
             if (!Read.User(this.client, "id").isEmpty()) {
                 return "Invalid username: '" + this.client + "' already exists";
             }
@@ -99,17 +110,24 @@ public class UserAuthentication extends Commands implements Encryption {
         }
         catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             System.out.println("Encryption error");
-            e.printStackTrace();
+            //e.printStackTrace(); //Used for debugging
         }
         return Colors.GREEN + "\nYou've been registered as '" + this.client + "'." + Colors.DEFAULT;
     }
 
 
+    /**
+     * Compares the hashed password with the stored one and adds a new salt to both,
+     * if the login is successful the stored password gets updated with the new salt and logs the user
+     *
+     * @return a corresponding String that indicates if the login is successful or not
+     */
     private String Login() {
         try {
             String encryptedPassword = Hashing(), storedRawPassword = Read.User(this.client, "password");
             String storedPassword = storedRawPassword.substring(0, storedRawPassword.lastIndexOf(":"));
             String newSalt = ":" + Salting();
+            System.out.println(encryptedPassword + newSalt);
 
             if (!(encryptedPassword + newSalt).equals((storedPassword + newSalt))) {
                 return "Authentication failed";

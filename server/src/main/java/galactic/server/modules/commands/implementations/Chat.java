@@ -8,9 +8,13 @@ import java.util.Set;
 import galactic.server.modules.commands.Commands;
 import galactic.server.modules.commands.miscellaneous.Colors;
 import galactic.server.modules.database.crud.Create;
+import galactic.server.modules.database.crud.Delete;
 import galactic.server.modules.database.crud.Read;
 
 
+/**
+ * Inherits 'Commands', handles private chat commands and creates a corresponding response from the server
+ */
 public class Chat extends Commands {
 
     private final String
@@ -23,6 +27,14 @@ public class Chat extends Commands {
 
 
 
+    /**
+     * Parse the received List,
+     * number of String might change depending on the used command,
+     * gets the properties to null if the command needs less arguments
+     *
+     * @param clientInput the user inputs
+     * @param clientName the client username
+     */
     public Chat(List<String> clientInput, String clientName) {
         this.client = clientName;
         this.command = clientInput.get(0);
@@ -42,7 +54,7 @@ public class Chat extends Commands {
             case "/accept" -> { return Accept(); }
             case "/decline" -> { return Decline(); }
             case "/msg" -> { return Message(); }
-            case "/exit_private_chat" -> { return "exit"; }
+            case "/exit_private_chat" -> { return ExitChat(); }
             default -> { return null; }
         }
     }
@@ -108,6 +120,7 @@ public class Chat extends Commands {
             return "";
         }
 
+        //Checks if the client already sent an accepted request to the specified user
         if (Read.ChatId(this.client, this.username) == 0) {
             this.selfMessage = "Send a '/private_chat' and wait for the username to accept before sending a message";
             return "";
@@ -116,6 +129,22 @@ public class Chat extends Commands {
         this.receiver.add(this.username);
         this.selfMessage = Colors.PURPLE + "\n<private> " + Colors.CYAN_UNDERLINED + this.client + Colors.WHITE + ": " + this.message + Colors.DEFAULT;
         return Colors.PURPLE + "\n<private> " + Colors.BLUE + this.client + Colors.WHITE + ": " + this.message + Colors.DEFAULT;
+    }
+
+
+    private String ExitChat() {
+        if (this.username == null) {
+            return CHAT_RQST_ARGS_ERROR;
+        }
+
+        if (Read.ChatId(this.client, this.username) == 0) {
+            this.selfMessage = "You're not chatting with '" + Colors.BLUE + this.username + Colors.DEFAULT + "'";
+            return "";
+        }
+
+        Delete.PrivateChat(this.client, this.username);
+        this.selfMessage = "\nYou've quitted the chat with " + this.username + Colors.DEFAULT;
+        return Colors.RED + "\n" + this.client + " stopped chatting with you" + Colors.DEFAULT;
     }
 
 

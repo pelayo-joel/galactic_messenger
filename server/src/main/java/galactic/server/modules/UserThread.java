@@ -10,13 +10,8 @@ import galactic.server.modules.commands.implementations.*;
 import galactic.server.modules.commands.miscellaneous.Colors;
 
 
-/**=-
- * This thread handles connection for each connected client, so the server
- * can handle multiple clients at the same time.
- *
- * @messageTransferSocket Specifies the TCP socket
- * @fileTransferSocket Specifies the UDP socket
- * @server Specifies the server
+/**
+ * Client threading, handles a single client and its inputs
  */
 public class UserThread extends Thread {
 
@@ -24,6 +19,7 @@ public class UserThread extends Thread {
 
     private final DatagramSocket fileSocket;
 
+    //Locks the user with '/login' or '/register' before using any other commands
     private boolean connected = false;
 
     private byte[] fileBuffer = new byte[200000000];
@@ -33,27 +29,35 @@ public class UserThread extends Thread {
     private PrintWriter writer;
 
 
-
+    /**
+     * Construct a thread for the client, needs a TCP and UDP socket
+     *
+     * @param messageTransferSocket Specifies the client's TCP socket
+     * @param fileTransferSocket Specifies the server's UDP socket
+     */
     public UserThread(Socket messageTransferSocket, DatagramSocket fileTransferSocket) {
         this.socket = messageTransferSocket;
         this.fileSocket = fileTransferSocket;
     }
 
 
-
-
-
+    /**
+     * Main method of the thread, handles user input, ends when the user quits the application (/quit or /disconnect)
+     */
     public void run() {
         try {
             System.out.println("User connection established");
             ObjectInputStream input = new ObjectInputStream(this.socket.getInputStream());
             this.writer = new PrintWriter(socket.getOutputStream(), true);
 
+            //Main loop for each thread, waits the user inputs permanently until it's '/disconnect', '/quit', or a ctrl+c
             do {
+                //Gets the user input as a List<String> and parses it with CommandHandler()
                 List<String> userInputs = (List<String>) input.readObject();
                 CommandHandler(userInputs);
 
             } while (!this.clientCommand.equals("/disconnect") && !this.clientCommand.equals("/quit"));
+
 
             ServerConnection.removeUser(this.clientName, this);
             socket.close();
@@ -61,14 +65,12 @@ public class UserThread extends Thread {
         }
         catch (IOException | ClassNotFoundException ex) {
             System.out.println("Error on user thread or client has 'ctrl+c': " + ex.getMessage());
-            ex.printStackTrace();
+            //ex.printStackTrace(); //Used for debugging
         }
     }
 
 
-    public String GetClientName() {
-        return this.clientName;
-    }
+    public String GetClientName() { return this.clientName; }
 
 
     /**
@@ -85,11 +87,16 @@ public class UserThread extends Thread {
     public void SendFile(DatagramPacket file) throws IOException { this.fileSocket.send(file); }
 
 
-
-
+    /**
+     * Handles what has been sent by the user
+     *
+     * @param clientInput User input and their arguments
+     * @throws IOException Needed to handle file transfer errors
+     */
     private void CommandHandler(List<String> clientInput) throws IOException {
         this.clientCommand = clientInput.get(0);
 
+        //First checks if the user is logged in
         if (!this.connected) {
             ClientLogin(clientInput);
             return;
@@ -97,14 +104,18 @@ public class UserThread extends Thread {
 
         Commands clientRequest = CommandParser(clientInput);
 
+
+        //If tree for edge cases commands that are handled differently
         if (clientRequest != null) {
             this.serverMessage = clientRequest.CommandHandler();
 
+            //If the command has invalid usage or arguments
             if (this.serverMessage.startsWith("Invalid")) {
                 this.SendMessage(this.serverMessage);
                 return;
             }
 
+            //If the command is related to file transfer, it needs to receive/send the file from the UDP socket, it is handled differently
             if (this.clientCommand.equals("/download")) {
                 DatagramPacket fileSend = ((FileTransmission) clientRequest).GetFile();
                 this.SendFile(fileSend);
@@ -118,6 +129,7 @@ public class UserThread extends Thread {
                 this.SendMessage(clientRequest.ServerResponse());
                 ServerConnection.messageBroadcast(this.serverMessage, clientRequest.GetReceivingParty());
             }
+            //Default outcome, simply sends back something to the client and broadcasts a message to corresponding users
             else {
                 System.out.println("Command executed?");
                 this.SendMessage(clientRequest.ServerResponse());
@@ -138,10 +150,12 @@ public class UserThread extends Thread {
             this.printUsers();
         }
 
+        //'/help' is a client-side handled command, should return nothing from the server
         else if (this.clientCommand.equals("/help")) {
             return;
         }
 
+        //Else, the command does not exist or hasn't been understood/taken into account
         else {
             this.SendMessage(Colors.DEFAULT + "\nInvalid command: " + this.clientCommand + "\n" +
                         "For 1-to-1 messages: '/private_chat', '/accept', '/decline', '/msg', '/exit_private_chat'\n" +
@@ -154,6 +168,13 @@ public class UserThread extends Thread {
     }
 
 
+    /**
+     * Calls the abstract class 'Commands' and constructs the corresponding class
+     * depending on the user inputs to handle them rightfully
+     *
+     * @param clientInput User input and their arguments
+     * @return the corresponding class depending on the user inputs
+     */
     private Commands CommandParser(List<String> clientInput) {
         Commands clientRequest = null;
 
@@ -171,6 +192,11 @@ public class UserThread extends Thread {
     }
 
 
+    /**
+     * Handles how to respond to the user if he's not logged in
+     *
+     * @param clientInput User input and their arguments
+     */
     private void ClientLogin(List<String> clientInput) {
         if (this.clientCommand.equals("/login") || this.clientCommand.equals("/register")) {
             Commands clientConnection = new UserAuthentication(clientInput);
@@ -212,7 +238,7 @@ public class UserThread extends Thread {
 
 
     /**
-     * Sends a list of online users to the newly connected user.
+     * Sends a list of online users
      */
     private void printUsers() {
         if (ServerConnection.hasUsers()) {

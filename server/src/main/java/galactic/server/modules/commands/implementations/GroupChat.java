@@ -19,6 +19,9 @@ import galactic.server.modules.database.crud.Read;
 import galactic.server.modules.database.crud.Update;
 
 
+/**
+ * Inherits 'Commands', handles group chat commands and creates a corresponding response from the server
+ */
 public class GroupChat extends Commands implements Encryption {
 
     private final String GRP_ARGS_ERROR = "\nInvalid usage: missing group\n" +
@@ -28,10 +31,15 @@ public class GroupChat extends Commands implements Encryption {
 
     private String group, thirdArg;
 
-    private Set<String> receiver;
 
-
-
+    /**
+     * Parse the received List,
+     * number of String might change depending on the used command,
+     * gets the properties to null if the command needs less arguments
+     *
+     * @param clientInput the user inputs
+     * @param clientName the client username
+     */
     public GroupChat(List<String> clientInput, String clientName) {
         this.client = clientName;
         this.command = clientInput.get(0);
@@ -88,14 +96,15 @@ public class GroupChat extends Commands implements Encryption {
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
         byte[] salt = new byte[16];
         sr.nextBytes(salt);
-        return Arrays.toString(salt);
+
+        StringBuilder hexaString = new StringBuilder();
+        for (byte b : salt) { hexaString.append(String.format("%02X", b)); }
+        return hexaString.toString();
     }
 
 
 
-    public String getGroup() {
-        return this.group;
-    }
+    public String getGroup() { return this.group; }
 
 
 
@@ -135,7 +144,7 @@ public class GroupChat extends Commands implements Encryption {
         }
         catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             System.out.println("Encryption error");
-            e.printStackTrace();
+            //e.printStackTrace(); //Used for debugging
         }
 
         this.receiver.addAll(Read.AllUsers());
@@ -189,7 +198,7 @@ public class GroupChat extends Commands implements Encryption {
         }
         catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             System.out.println("Encryption error");
-            e.printStackTrace();
+            //e.printStackTrace(); //Used for debugging
         }
 
         if(Read.GroupUsers(this.group).contains(this.client)) {

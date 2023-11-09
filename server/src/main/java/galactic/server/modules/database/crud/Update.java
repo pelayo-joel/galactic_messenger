@@ -6,9 +6,10 @@ import galactic.server.modules.database.DbConnection;
 import java.sql.SQLException;
 
 
+/**
+ * Inherits 'DbConnection', Handles the UPDATE operations for the database
+ */
 public class Update extends DbConnection {
-
-    private static Update instance;
 
 
 
@@ -18,14 +19,6 @@ public class Update extends DbConnection {
 
 
 
-
-
-    public static Update GetInstance() {
-        if (instance == null) {
-            instance = new Update();
-        }
-        return instance;
-    }
 
 
     public static void UserPassword(String username, String newPassword) {

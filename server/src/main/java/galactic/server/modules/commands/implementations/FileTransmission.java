@@ -9,6 +9,9 @@ import galactic.server.modules.database.crud.Create;
 import galactic.server.modules.database.crud.Read;
 
 
+/**
+ * Inherits 'Commands', handles file transfer commands and creates a corresponding response from the server
+ */
 public class FileTransmission extends Commands {
 
     private DatagramPacket file;
@@ -21,12 +24,22 @@ public class FileTransmission extends Commands {
 
 
 
+    /**
+     * Parse the received List,
+     * number of String might change depending on the used command,
+     * gets the properties to null if the command needs less arguments,
+     * it also removes the path from the filename
+     *
+     * @param clientInput the user inputs
+     * @param clientName the client username
+     */
     public FileTransmission(List<String> clientInput, String clientName) {
         this.client = clientName;
         this.command = clientInput.get(0);
         this.canal = clientInput.size() >= 2 ? clientInput.get(1) : null;
         this.fileName = clientInput.size() == 3 ? clientInput.get(2) : null;
 
+        //Removes the path from filename
         if (this.fileName != null && this.fileName.contains("/")) {
             this.fileName = this.fileName.substring(this.fileName.lastIndexOf("/") + 1);
         }
@@ -49,15 +62,11 @@ public class FileTransmission extends Commands {
 
 
     @Override
-    public String ServerResponse() {
-        return this.selfMessage;
-    }
+    public String ServerResponse() { return this.selfMessage; }
 
 
     @Override
-    public Set<String> GetReceivingParty() {
-        return this.receiver;
-    }
+    public Set<String> GetReceivingParty() { return this.receiver; }
 
 
 

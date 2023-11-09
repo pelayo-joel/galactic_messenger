@@ -9,29 +9,38 @@ import java.util.Set;
 import galactic.server.modules.database.DbConnection;
 
 
+/**
+ * Singleton class that handles every client,
+ * has methods to facilitate client connection/communication
+ */
 public class ServerConnection {
 
     private static int serverPort, databasePort;
 
     private static ServerConnection server = null;
 
-    private static DbConnection database;
-
+    //Keeps in memory each client username
     private static Set<String> userNames = new HashSet<>();
 
+    //Keeps in memory each connected client
     private static Set<UserThread> userThreads = new HashSet<>();
 
 
 
+    /**
+     * Constructs the server connection and starts port listening for clients
+     *
+     * @param port Specifies the server's port
+     */
     private ServerConnection(int port) {
         serverPort = port;
         execute();
     }
 
 
-
-
-
+    /**
+     * Server's method that waits any client connection and threads it
+     */
     private static void execute() {
         try (ServerSocket serverSocket = new ServerSocket(serverPort)) {
 
@@ -53,11 +62,18 @@ public class ServerConnection {
 
         } catch (IOException ex) {
             System.out.println("Error in the server: " + ex.getMessage());
-            ex.printStackTrace();
+            //ex.printStackTrace(); //Used for debugging
         }
     }
 
 
+    /**
+     * Method which starts the server connection
+     *
+     * @param port Server port
+     * @param dbPort Database port
+     * @return the server connection
+     */
     public static ServerConnection GetInstance(int port, int dbPort) {
         if (server == null) {
             databasePort = dbPort;
@@ -82,13 +98,11 @@ public class ServerConnection {
     /**
      * Stores username of the newly connected client.
      */
-    public static void addUserName(String userName) {
-        userNames.add(userName);
-    }
+    public static void addUserName(String userName) { userNames.add(userName); }
 
 
     /**
-     * When a client is disconneted, removes the associated username and UserThread
+     * When a client is disconnected, removes the associated username and UserThread
      */
     public static void removeUser(String userName, UserThread aUser) {
         boolean removed = userNames.remove(userName);
@@ -99,13 +113,12 @@ public class ServerConnection {
     }
 
 
-    public static Set<String> getUserNames() { return userNames; }
-
-
     /**
      * Returns true if there are other users connected (not count the currently connected user)
      */
-    public static boolean hasUsers() {
-        return !userNames.isEmpty();
-    }
+    public static boolean hasUsers() { return !userNames.isEmpty(); }
+
+
+    public static Set<String> getUserNames() { return userNames; }
+
 }

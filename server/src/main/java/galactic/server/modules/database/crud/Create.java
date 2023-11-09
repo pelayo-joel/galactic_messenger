@@ -1,33 +1,23 @@
 package galactic.server.modules.database.crud;
 
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import galactic.server.modules.database.DbConnection;
 
 
+/**
+ * Inherits 'DbConnection', Handles the CREATE operations for the database
+ */
 public class Create extends DbConnection {
 
-    private static Create instance;
+
+
+    private Create() { super(databasePort); }
 
 
 
-    private Create() {
-        super(databasePort);
-    }
-
-
-
-
-
-//    public static Create GetInstance() {
-//        if (instance == null) {
-//            instance = new Create();
-//        }
-//        return instance;
-//    }
 
 
     public static void User(String username, String userPassword) {

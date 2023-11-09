@@ -7,6 +7,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 
+/**
+ * Singleton class, handles the connection to the database
+ * Child classes holds multiple methods that interacts with the database
+ */
 public class DbConnection {
 
     protected static int databasePort;
@@ -27,7 +31,7 @@ public class DbConnection {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            this.connection = DriverManager.getConnection(url, "root", "mysqlroot");
+            connection = DriverManager.getConnection(url, "root", "mysqlroot");
             System.out.println("Successfully connected to the database");
         } catch (Exception e) {
             System.out.println(e);

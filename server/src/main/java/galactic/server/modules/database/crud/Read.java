@@ -11,9 +11,10 @@ import java.util.List;
 import java.util.Set;
 
 
+/**
+ * Inherits 'DbConnection', Handles the READ operations for the database
+ */
 public class Read extends DbConnection {
-
-    private static Read instance;
 
 
 
@@ -23,14 +24,6 @@ public class Read extends DbConnection {
 
 
 
-
-
-//    public static Read GetInstance() {
-//        if (instance == null) {
-//            instance = new Read();
-//        }
-//        return instance;
-//    }
 
 
     public static String User(String username, String usersField) {
