@@ -74,12 +74,9 @@ public class Client {
                         SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
                         byte[] hashedPassword = keyFactory.generateSecret(pbeKeySpec).getEncoded();
 
-                        // Convert the hashed password and salt to Base64
+                        // Convert the hashed password to Base64
                         String hashedPasswordBase64 = Base64.getEncoder().encodeToString(hashedPassword);
-                        String saltBase64 = Base64.getEncoder().encodeToString(salt);
-
                         userInputs.set(2, hashedPasswordBase64); // Replace the password with the hashed password
-                        userInputs.add(saltBase64); // Add the salt to the userInputs list
 
                         // Now you have the hashed password and salt in userInputs for further processing
                     } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
