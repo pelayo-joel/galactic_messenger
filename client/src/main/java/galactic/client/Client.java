@@ -23,11 +23,12 @@ public class Client {
         user_demands = new ArrayList<>();
         try {
             // Create a socket to connect to the server
+
             System.out.println("Creating socket...");
             socket = new Socket(serverAddress, Integer.parseInt(port));
             System.out.println("Socket created.");
-
             // Initialize input and output streams
+
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             System.out.println("Reader initialized.");
             writer = new ObjectOutputStream(socket.getOutputStream());
@@ -38,49 +39,64 @@ public class Client {
     }
     public void sendMessage(String message) {
         try {
-            // Split the input message into a list of words
-            List<String> userInputs = new ArrayList<>(Arrays.asList(message.split(" ")));
+                // Split the input message into a list of words
+                List<String> userInputs = new ArrayList<>(Arrays.asList(message.split(" ")));
 
-            if (userInputs.get(0).equals("/accept") || userInputs.get(0).equals("/decline")) {
-                // Process requests for private chats
-                for (String user : user_demands) {
-                    if (userInputs.get(1).equals(user)) {
-                        userInputs.add(user);
-                        user_demands.remove(user);
-                        break;
+                if (userInputs.get(0).equals("/accept") || userInputs.get(0).equals("/decline")) {
+                    boolean isDemanding = false;
+                    String demandedUser = null;
+
+                    // Process requests for private chats
+                    for (String user : user_demands) {
+                        // Verify if the user is in the list of demands
+                        if (user.equals(userInputs.get(1))) {
+                            isDemanding = true;
+                            demandedUser = user;
+                            user_demands.remove(user);
+                            break;
+                        }
+                    }
+
+                    if (isDemanding) {
+                        userInputs.add(demandedUser);
+                    } else {
+                        // User is not in the list of demands
+                        System.out.println("You don't have any demand from this user");
+                        return; // Do not send anything to the server
                     }
                 }
-            }
-            if (userInputs.get(0).equals("/register") || userInputs.get(0).equals("/login")) {
-                // Hashing the password
-                char[] chars = userInputs.get(2).toCharArray();
-                byte[] salt = new byte[16];
-                try {
-                    PBEKeySpec pbeKeySpec = new PBEKeySpec(chars, salt, 1000, 64 * 8);
-                    SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-                    byte[] hashedPassword = keyFactory.generateSecret(pbeKeySpec).getEncoded();
+                if (userInputs.get(0).equals("/register") || userInputs.get(0).equals("/login")) {
+                    // Hashing the password
+                    char[] chars = userInputs.get(2).toCharArray();
+                    byte[] salt = new byte[16];
+                    try {
+                        PBEKeySpec pbeKeySpec = new PBEKeySpec(chars, salt, 1000, 64 * 8);
+                        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+                        byte[] hashedPassword = keyFactory.generateSecret(pbeKeySpec).getEncoded();
 
-                    // Convert the hashed password and salt to Base64
-                    String hashedPasswordBase64 = Base64.getEncoder().encodeToString(hashedPassword);
-                    String saltBase64 = Base64.getEncoder().encodeToString(salt);
+                        // Convert the hashed password and salt to Base64
+                        String hashedPasswordBase64 = Base64.getEncoder().encodeToString(hashedPassword);
+                        String saltBase64 = Base64.getEncoder().encodeToString(salt);
 
-                    userInputs.set(2, hashedPasswordBase64); // Replace the password with the hashed password
-                    userInputs.add(saltBase64); // Add the salt to the userInputs list
+                        userInputs.set(2, hashedPasswordBase64); // Replace the password with the hashed password
+                        userInputs.add(saltBase64); // Add the salt to the userInputs list
 
-                    // Now you have the hashed password and salt in userInputs for further processing
-                } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-                    // Handle any exceptions here
-                    e.printStackTrace();
+                        // Now you have the hashed password and salt in userInputs for further processing
+                    } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                        // Handle any exceptions here
+                        e.printStackTrace();
+                    }
                 }
-            }
 
-            System.out.println(userInputs);
-            writer.writeObject(userInputs);
-            writer.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
+
+                System.out.println(userInputs);
+                writer.writeObject(userInputs);
+                writer.flush();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-    }
 
     public String receiveMessage() {
         try {
