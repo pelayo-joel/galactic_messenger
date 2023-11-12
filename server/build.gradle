@@ -23,6 +23,7 @@ jar {
     destinationDirectory = file("$rootDir")
     manifest {
         attributes "Main-Class" : "galactic.server.Server"
+        attributes "Class-Path" : configurations.runtimeClasspath.files.collect { it.name }.join()
     }
     from {
         configurations.runtimeClasspath.collect{it.isDirectory() ? it : zipTree(it)}
