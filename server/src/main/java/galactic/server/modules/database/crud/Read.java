@@ -164,6 +164,27 @@ public class Read extends DbConnection {
     }
 
 
+    public static int NewChatId() {
+        int roomId = 0;
+        try{
+            String createQuery = "SELECT room.id FROM room ORDER BY room.id DESC LIMIT 1;";
+            sqlStatement = connection.prepareStatement(createQuery);
+
+            statementResult = sqlStatement.executeQuery();
+
+            while(statementResult.next()) {
+                System.out.println(roomId);
+                roomId = statementResult.getInt(1);
+            }
+        }
+        catch (SQLException e) {
+            System.out.println("Error in database: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return roomId;
+    }
+
+
     public static List<String> AllGroupNames() {
         List<String> groupList = new ArrayList<>();
 

@@ -40,7 +40,7 @@ public class Create extends DbConnection {
     public static void PrivateChat(String clientName, String username) {
         Create.InsertRoom(null, false, false, null);
 
-        int idRoom = Read.ChatId(clientName, username);
+        int idRoom = Read.NewChatId();
         Create.InsertUserInRoom(idRoom, clientName);
         Create.InsertUserInRoom(idRoom, username);
     }

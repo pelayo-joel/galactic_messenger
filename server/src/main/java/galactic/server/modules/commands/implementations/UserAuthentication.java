@@ -29,7 +29,7 @@ public class UserAuthentication extends Commands implements Encryption {
 
 
     /**
-     * Gets each string from the list to parse it
+     * Gets each string from the list to parse them
      *
      * @param clientInput user Input
      */
@@ -103,9 +103,7 @@ public class UserAuthentication extends Commands implements Encryption {
             String encryptedPassword = Hashing() + ":" + Salting();
 
             //Checks if the user already exists or not
-            if (!Read.User(this.client, "id").isEmpty()) {
-                return "Invalid username: '" + this.client + "' already exists";
-            }
+            if (!Read.User(this.client, "id").isEmpty()) { return "Invalid username: '" + this.client + "' already exists"; }
             Create.User(this.client, encryptedPassword);
         }
         catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
@@ -124,6 +122,8 @@ public class UserAuthentication extends Commands implements Encryption {
      */
     private String Login() {
         try {
+            if (Read.User(this.client, "username").isEmpty()) { return "Invalid username: '" + this.client + "' does not exists"; }
+
             String encryptedPassword = Hashing(), storedRawPassword = Read.User(this.client, "password");
             String storedPassword = storedRawPassword.substring(0, storedRawPassword.lastIndexOf(":"));
             String newSalt = ":" + Salting();

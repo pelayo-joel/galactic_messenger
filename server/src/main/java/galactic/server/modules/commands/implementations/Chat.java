@@ -120,6 +120,11 @@ public class Chat extends Commands {
             return "";
         }
 
+        if (!Read.AllUsers().contains(this.username)) {
+            this.selfMessage = "'" + this.username + "' does not exist...";
+            return "";
+        }
+
         //Checks if the client already sent an accepted request to the specified user
         if (Read.ChatId(this.client, this.username) == 0) {
             this.selfMessage = "Send a '/private_chat' and wait for the username to accept before sending a message";
