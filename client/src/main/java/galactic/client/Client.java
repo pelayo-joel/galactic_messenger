@@ -39,61 +39,45 @@ public class Client {
     }
     public void sendMessage(String message) {
         try {
-                // Split the input message into a list of words
-                List<String> userInputs = new ArrayList<>(Arrays.asList(message.split(" ")));
+            // Split the input message into a list of words
+            List<String> userInputs = new ArrayList<>(Arrays.asList(message.split(" ", 3)));
 
-                if (userInputs.get(0).equals("/accept") || userInputs.get(0).equals("/decline")) {
-                    boolean isDemanding = false;
-                    String demandedUser = null;
-
-                    // Process requests for private chats
-                    for (String user : user_demands) {
-                        // Verify if the user is in the list of demands
-                        if (user.equals(userInputs.get(1))) {
-                            isDemanding = true;
-                            demandedUser = user;
-                            user_demands.remove(user);
-                            break;
-                        }
-                    }
-
-                    if (isDemanding) {
-                        userInputs.add(demandedUser);
-                    } else {
-                        // User is not in the list of demands
-                        System.out.println("You don't have any demand from this user");
-                        return; // Do not send anything to the server
-                    }
+            if (userInputs.get(0).equals("/accept") || userInputs.get(0).equals("/decline")) {
+                if (!user_demands.contains(userInputs.get(1))) {
+                    user_demands.remove(userInputs.get(1));
+                } else {
+                    // User is not in the list of demands
+                    System.out.println("You don't have any demand from this user");
+                    return; // Do not send anything to the server
                 }
-                if (userInputs.get(0).equals("/register") || userInputs.get(0).equals("/login")) {
-                    // Hashing the password
-                    char[] chars = userInputs.get(2).toCharArray();
-                    byte[] salt = new byte[16];
-                    try {
-                        PBEKeySpec pbeKeySpec = new PBEKeySpec(chars, salt, 1000, 64 * 8);
-                        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-                        byte[] hashedPassword = keyFactory.generateSecret(pbeKeySpec).getEncoded();
-
-                        // Convert the hashed password to Base64
-                        String hashedPasswordBase64 = Base64.getEncoder().encodeToString(hashedPassword);
-                        userInputs.set(2, hashedPasswordBase64); // Replace the password with the hashed password
-
-                        // Now you have the hashed password and salt in userInputs for further processing
-                    } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-                        // Handle any exceptions here
-                        e.printStackTrace();
-                    }
-                }
-
-
-                System.out.println(userInputs);
-                writer.writeObject(userInputs);
-                writer.flush();
-
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+            if (userInputs.get(0).equals("/register") || userInputs.get(0).equals("/login")) {
+                // Hashing the password
+                char[] chars = userInputs.get(2).toCharArray();
+                byte[] salt = new byte[16];
+                try {
+                    PBEKeySpec pbeKeySpec = new PBEKeySpec(chars, salt, 1000, 64 * 8);
+                    SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+                    byte[] hashedPassword = keyFactory.generateSecret(pbeKeySpec).getEncoded();
+
+                    // Convert the hashed password to Base64
+                    String hashedPasswordBase64 = Base64.getEncoder().encodeToString(hashedPassword);
+                    userInputs.set(2, hashedPasswordBase64); // Replace the password with the hashed password
+
+                    // Now you have the hashed password and salt in userInputs for further processing
+                } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                    // Handle any exceptions here
+                    e.printStackTrace();
+                }
+            }
+
+            writer.writeObject(userInputs);
+            writer.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
 
     public String receiveMessage() {
         try {
@@ -156,7 +140,7 @@ public class Client {
                 client.close();
                 break;
             }
-            if (message.equals("/help")) {
+            else if (message.equals("/help")) {
                 // Display help information
                 System.out.println(Colors.RED + "For 1-to-1 messages:\n" +
                         Colors.BLUE + "\n/private_chat [target user] :" + Colors.DEFAULT + " Cette commande permet de demarrer une conversation privee avec un autre utilisateur en specifiant leur nom.\n" +
@@ -188,3 +172,4 @@ public class Client {
         }
     }
 }
+
