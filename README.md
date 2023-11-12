@@ -23,7 +23,7 @@ git clone https://github.com/pelayo-joel/galactic_messenger.git
 <br></br>
 
 
-<p align="center">**Presentation**</p>
+## <p align="center">**Presentation**</p>
 ---
 <div align="center"><img src="src/galactic_messenger_clients.png"  width="40%" height="20%">
 <img src="src/galactic_messenger_server.png"  width="40%" height="20%"></div>
